@@ -37,7 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'app01.apps.App01Config',
+    "web.apps.WebConfig"
 ]
 
 MIDDLEWARE = [
@@ -55,7 +55,7 @@ ROOT_URLCONF = 'TCMManagement.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates']
+        'DIRS': [BASE_DIR / 'web/templates']
         ,
         'APP_DIRS': True,
         'OPTIONS': {
@@ -77,8 +77,12 @@ WSGI_APPLICATION = 'TCMManagement.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'tcmmanagement',  # 数据库名字
+        'USER': 'root',
+        'PASSWORD': 'qq1794521352',
+        'HOST': '127.0.0.1',  # 安装MYsql的电脑
+        'PORT': 3306
     }
 }
 
@@ -123,6 +127,27 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# ######## sms  ########
+
+# 腾讯云短信应用的 app_id
+TENCENT_SMS_APP_ID = 6666666666
+
+# 腾讯云短信应用的 app_key
+TENCENT_SMS_APP_KEY = "6666666666666666666666"
+
+# 腾讯云短信签名内容
+TENCENT_SMS_SIGN = "Python之路"
+
+TENCENT_SMS_TEMPLATE = {
+    'register': 2125165,
+    'login': 2125166
+}
+
+TENCENT_COS_ID = "COS的secret_id"
+TENCENT_COS_KEY = "COS的secret_key"
+
+
 
 try:
     from .local_settings import *

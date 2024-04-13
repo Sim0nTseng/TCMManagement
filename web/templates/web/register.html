@@ -1,0 +1,101 @@
+{% extends 'layout/basic.html' %}
+{% load static %}
+{% block title %}用户注册{% endblock %}
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/account.css' %}">
+    <style>
+    .error-msg{
+        color:red;
+        position:absolute;
+    }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="account">
+        <h1 style="text-align: center">注册</h1>
+        {% for item in form %}
+            <form id="form" method="post" novalidate>
+            {% csrf_token %}
+            <div class="form-group">
+                {% if item.name == 'code' %}
+                    <label for="{{ item.id_for_label }}">{{ item.label }}</label>
+                    <div class="clearfix">
+                        <div class="col-xs-7" style="padding-left: 0">
+                            {{ item }}
+                        <span class="error-msg"></span>
+                        </div>
+                        <div class="col-xs-5"><input type="button" class="btn btn-default" value="点击获取验证码"
+                                                     id="btnSms"></div>
+                    </div>
+                {% else %}
+                    <label>{{ item.label }}</label>
+                    {{ item }}
+                    <span class="error-msg"></span>
+                {% endif %}
+            </div>
+        {% endfor %}
+        <button type="submit" class="btn btn-primary">注 册</button>
+        </form>
+    </div>
+{% endblock %}
+
+{% block js %}
+    <script>
+        //页面框架加载完成之后自动执行的函数
+        $(function (){
+            bindClickBtnSms()
+        })
+
+        /*
+        点击获取验证码的按钮绑定事件
+         */
+        function bindClickBtnSms(){
+            $('#btnSms').click(function (){
+
+                $('.error-msg').empty()
+
+                // 获取用户输入的手机号
+                var mobilePhone=$('#id_mobile_phone').val();
+
+                //发送ajax请求，把手机号发送过去
+                $.ajax({
+                    url:"/send/sms/",//提交的地址->Get的话会拼接为http://www.xx.com/send/sms/?{data的值}
+                    type:"GET",//发送方式
+                    data:{mobile_phone:mobilePhone,tpl:"register"},//tpl是指我们的模板因为有很多发短信的模板
+                    dataType:"JSON",//将服务器返回的数据反序列化为字典，加上更加保险
+                    success:
+                        function(res) {
+                        //ajax发送成功后自动回调的函数：res就是后端返回的值
+                            if(res.status)
+                            {
+                                sendSmsRemind();
+                            }else{
+                                console.log(res);
+                                $.each(res.errors,function (key,value){
+                                    {#循环res这个字典，每次循环执行function函数，拿到key加value，然后字符串拼接找到这个框的next就是span显示错误#}
+                                    $('#id_'+key).next().text(value[0]);
+                                })
+                            }
+                        }
+                    })
+            })
+
+        }
+
+        function sendSmsRemind(){
+            var $smsBtn=$('#btnSms');
+
+            $smsBtn.prop('disabled',true);
+            var time=60;
+            var remind=setInterval(function (){
+                $smsBtn.val(time+"秒重新发送");
+                time=time-1;
+                if(time<1){
+                    clearInterval(remind);
+                    $smsBtn.val("点击获取验证码").prop('disabled',false);
+                }
+            })
+        }
+    </script>
+{% endblock %}
