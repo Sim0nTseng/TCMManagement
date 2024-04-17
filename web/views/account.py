@@ -7,9 +7,17 @@ from web.forms import account
 
 def register(request):
     """注册"""
-    register_form=account.registerModelform()
-    return render(request, 'web/register.html',{'form':register_form})
-
+    if request.method=="GET":
+        register_form=account.registerModelform()
+        return render(request, 'web/register.html',{'form':register_form})
+    #数据校验惹
+    form=account.registerModelform(data=request.POST)
+    if form.is_valid():
+        # 验证通过，写入数据库（密码是密文）
+        form.save() #save保存的话他会剔除一下不用的字段，只保留数据库要的
+        return JsonResponse({'status':True,'data':'/login/'})
+    else:
+        return JsonResponse({'status':False,'error':form.errors}) #转去写钩子惹
 
 def send_sms(request):
     """发送短信"""

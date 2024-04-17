@@ -35,7 +35,8 @@
                 {% endif %}
             </div>
         {% endfor %}
-        <button type="submit" class="btn btn-primary">注 册</button>
+        {#不要写成submit虽然更简单，写ajax就不能写submit#}
+        <button type="button" class="btn btn-primary" id="btnRegister">注 册</button>
         </form>
     </div>
 {% endblock %}
@@ -45,14 +46,39 @@
         //页面框架加载完成之后自动执行的函数
         $(function (){
             bindClickBtnSms()
+            bindClickBtnRegister()
         })
+
+        function bindClickBtnRegister(){
+            $('#btnRegister').click(function (){
+                //刷新一下
+                $('.error-msg').empty();
+                //收集表单数据(找到每一个字段/POST）
+                //发送数据到后台
+                $.ajax({
+                    url:"/register/",//就是给他提交过去
+                    type: "POST",
+                    dataType: "JSON",
+                    data:$('#form').serialize() ,//巨牛逼！它可以把所有字段数据都获取到并且加上 从csrf+token
+                    success:function (res){
+                        if(res.status){
+                            location.href=res.data;//重定位到传来的data值页面
+                        }else{
+                            $.each(res.error,function (key,value){
+                                $("#id_"+key).next().text(value[0]);
+                            })
+                        }
+                    }
+                })
+            })
+        }
 
         /*
         点击获取验证码的按钮绑定事件
          */
         function bindClickBtnSms(){
             $('#btnSms').click(function (){
-
+                {#清空一下错误信息#}
                 $('.error-msg').empty()
 
                 // 获取用户输入的手机号
@@ -95,7 +121,7 @@
                     clearInterval(remind);
                     $smsBtn.val("点击获取验证码").prop('disabled',false);
                 }
-            })
+            },1000)
         }
     </script>
 {% endblock %}
