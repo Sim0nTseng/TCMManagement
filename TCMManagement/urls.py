@@ -19,10 +19,18 @@ from django.template.defaulttags import url
 from django.urls import path
 from django.conf.urls import include
 
-from web.views import account
+from web.views import account,home,project
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('register/', account.register),
-    path('send/sms/',account.send_sms)
-]
+    path('send/sms/',account.send_sms),
+    path('login/sms/',account.login_sms),
+    path('login/',account.login),
+    path('images/code/',account.image_code),
+    path('index/',home.index),
+    path('logout/',home.logout),
+
+    # 项目管理
+    path('project/list/',project.project_list),
+    ]

@@ -1,0 +1,59 @@
+{% extends 'layout/basic.html' %}
+{% load static %}
+{% block title %}密码登录{% endblock %}
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/account.css' %}">
+    <style>
+        .error-msg {
+            color: red;
+            position: absolute;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="account">
+        <h1 style="text-align: center">用户名密码登录</h1>
+        {% for item in form %}
+            <form id="smsForm" method="post" novalidate>
+            {% csrf_token %}
+            <div class="form-group">
+                {% if item.name == 'code' %}
+                    <label for="{{ item.id_for_label }}">{{ item.label }}</label>
+                    <div class="clearfix">
+                        <div class="col-xs-7" style="padding-left: 0">
+                            {{ item }}
+                            <span class="error-msg">{{ item.errors.0 }}</span>
+                        </div>
+                        <div class="col-xs-5">
+                            <img src="/images/code/" id="imageCode" title="点击更换图片">
+                        </div>
+                    </div>
+                {% else %}
+                    <label>{{ item.label }}</label>
+                    {{ item }}
+                    <span class="error-msg">{{ item.errors.0 }}</span>
+                {% endif %}
+            </div>
+        {% endfor %}
+
+        <div style="float: right">
+            <a href="/login/sms/">短信验证码登录？</a>
+        </div>
+        {#不要写成submit虽然更简单，写ajax就不能写submit#}
+        <button type="submit" class="btn btn-primary" >登 录</button>
+        <button type="button" class="btn btn-default" id="">注 册</button>
+        </form>
+    </div>
+{% endblock %}
+
+{% block js %}
+    <script>
+    $(function (){
+        $("#imageCode").click(function (){
+            var oldSrc=$(this).attr("src"); //获取原来的地址
+            $(this).attr('src',oldSrc+'?');///index/?相当于再发一次请求
+        })
+    })
+    </script>
+{% endblock %}

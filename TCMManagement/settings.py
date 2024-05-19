@@ -15,7 +15,6 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
@@ -26,7 +25,6 @@ SECRET_KEY = 'django-insecure-r0p_%+%8d)8)ai_3+r4&2-oqv)(ralg=$eplb5bf=$e^^_6&t2
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
 
 # Application definition
 
@@ -48,6 +46,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'web.middlewares.auth.AuthMiddleware'
 ]
 
 ROOT_URLCONF = 'TCMManagement.urls'
@@ -71,7 +70,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'TCMManagement.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
@@ -85,7 +83,6 @@ DATABASES = {
         'PORT': 3306
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -105,7 +102,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 
@@ -116,7 +112,6 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
@@ -147,7 +142,15 @@ TENCENT_SMS_TEMPLATE = {
 TENCENT_COS_ID = "COS的secret_id"
 TENCENT_COS_KEY = "COS的secret_key"
 
-
+###########白名单，无需登录也可以访问的网站
+WHITE_REGEX_URL_LIST = [
+    '/register/',
+    '/send/sms/',
+    '/login/sms/',
+    '/login/',
+    '/images/code/',
+    '/index/',
+]
 
 try:
     from .local_settings import *

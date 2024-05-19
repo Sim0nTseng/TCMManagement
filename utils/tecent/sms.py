@@ -35,7 +35,7 @@ def smsSendMessage(phone_num, template_id, template_param_list):
             "SmsSdkAppId": settings.TENCENT_SMS_APP_ID,
             "SignName": settings.TENCENT_SMS_SIGN,
             "TemplateId": template_id,
-            "TemplateParamSet": [template_param_list]
+            "TemplateParamSet": template_param_list
         }
         req.from_json_string(json.dumps(params))
 

@@ -1,0 +1,119 @@
+{% extends 'layout/basic.html' %}
+{% load static %}
+{% block title %}短信登录{% endblock %}
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/account.css' %}">
+    <style>
+        .error-msg {
+            color: red;
+            position: absolute;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="account">
+        <h1 style="text-align: center">短信登录</h1>
+        {% for item in form %}
+            <form id="smsForm" method="post" novalidate>
+            {% csrf_token %}
+            <div class="form-group">
+                {% if item.name == 'code' %}
+                    <label for="{{ item.id_for_label }}">{{ item.label }}</label>
+                    <div class="clearfix">
+                        <div class="col-xs-7" style="padding-left: 0">
+                            {{ item }}
+                            <span class="error-msg"></span>
+                        </div>
+                        <div class="col-xs-5"><input type="button" class="btn btn-default" value="点击获取验证码"
+                                                     id="btnSms"></div>
+                    </div>
+                {% else %}
+                    <label>{{ item.label }}</label>
+                    {{ item }}
+                    <span class="error-msg"></span>
+                {% endif %}
+            </div>
+        {% endfor %}
+
+        <div style="float: right">
+            <a href="/login/">用户名密码登录？</a>
+        </div>
+        {#不要写成submit虽然更简单，写ajax就不能写submit#}
+        <button type="button" class="btn btn-primary" id="btnLoad">登 录</button>
+        <button type="button" class="btn btn-default" id="">注 册</button>
+        </form>
+    </div>
+{% endblock %}
+
+{% block js %}
+    <script>
+        $(function () {
+            BindLoad()
+            BindSms()
+        })
+
+        function BindSms() {
+            $('#btnSms').click(function () {
+                {#清空一下错误信息#}
+                $('.error-msg').empty()
+
+                //获取手机号
+                var mobilePhone = $('#id_mobile_phone').val();
+                $.ajax({
+                    url: "/send/sms/",//记住send前面还要加一个/不然她还会自己拼接
+                    type: "GET",
+                    data: {mobile_phone: mobilePhone, tpl: "login"},
+                    dataType: "JSON",
+                    success: function (res) {
+                        if (res.status) {
+                            //倒计时
+                            sendSmsRemind();
+                        } else {
+                            console.log(res);
+                            $.each(res.errors, function (key, value) {
+                                {#循环res这个字典，每次循环执行function函数，拿到key加value，然后字符串拼接找到这个框的next就是span显示错误#}
+                                $('#id_' + key).next().text(value[0]);
+                            })
+                        }
+                    }
+                })
+            })
+        }
+
+        function BindLoad() {
+            $('#btnLoad').click(function () {
+                $.ajax({
+                    url: "/login/sms/",
+                    type: "POST",
+                    dataType: "JSON",
+                    data: $('#smsForm').serialize(),//巨牛逼！它可以把所有字段数据都获取到并且加上 从csrf+token
+                    success: function (res) {
+                        if (res.status) {
+                            location.href = res.data;//重定位到传来的data值页面
+                        } else {
+                            $.each(res.error, function (key, value) {
+                                $("#id_" + key).next().text(value[0]);
+                            })
+                        }
+                    }
+                })
+            })
+        }
+
+        function sendSmsRemind() {
+            var $smsBtn = $('#btnSms');
+
+            $smsBtn.prop('disabled', true);
+            var time = 60;
+            var remind = setInterval(function () {
+                $smsBtn.val(time + "秒重新发送");
+                time = time - 1;
+                if (time < 1) {
+                    clearInterval(remind);
+                    $smsBtn.val("点击获取验证码").prop('disabled', false);
+                }
+            }, 1000)
+        }
+    </script>
+{% endblock %}
