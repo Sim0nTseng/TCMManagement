@@ -28,6 +28,7 @@ class AuthMiddleware(MiddlewareMixin):
         1.获取当前用户访问的URL
         2.检查URL是否在白名单中，如果在则可以继续访问，如果不在则进行判断是否登录
         """
+
         if request.path_info in settings.WHITE_REGEX_URL_LIST:
             return
 

@@ -1,16 +1,280 @@
 {% extends 'layout/manage.html' %}
 
 {% block css %}
-    <style>
-        .project{
-            margin-bottom: 10px;
+   <style>
+        .project {
+            margin-top: 10px;
+        }
 
+        .panel-body {
+            padding: 0;
+            display: flex;
+            flex-direction: row;
+            justify-content: left;
+            align-items: flex-start;
+            flex-wrap: wrap;
+        }
+
+        .panel-body > .item {
+            border-radius: 6px;
+            width: 228px;
+            border: 1px solid #dddddd;
+            margin: 20px 10px;
+
+        }
+
+        .panel-body > .item:hover {
+            border: 1px solid #f0ad4e;
+        }
+
+        .panel-body > .item > .title {
+            height: 104px;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-top-left-radius: 6px;
+            border-top-right-radius: 6px;
+            font-size: 15px;
+            text-decoration: none;
+        }
+
+        .panel-body > .item > .info {
+            padding: 10px 10px;
+
+            display: flex;
+            justify-content: space-between;
+
+            border-bottom-left-radius: 6px;
+            border-bottom-right-radius: 6px;
+            color: #8c8c8c;
+
+        }
+
+        .panel-body > .item > .info a {
+            text-decoration: none;
+        }
+
+        .panel-body > .item > .info .fa-star {
+            font-size: 18px;
+        }
+
+        .color-radio label {
+            margin-left: 0;
+            padding-left: 0;
+        }
+
+        .color-radio input[type="radio"] {
+            display: none;
+        }
+
+        .color-radio input[type="radio"] + .cycle {
+            display: inline-block;
+            height: 25px;
+            width: 25px;
+            border-radius: 50%;
+            border: 2px solid #dddddd;
+        }
+
+        .color-radio input[type="radio"]:checked + .cycle {
+            border: 2px solid black;
         }
     </style>
 {% endblock %}
 
 {% block content %}
     <div class="container-fluid project">
-        <a class="btn btn-primary"><i class="fa fa-plus-square" aria-hidden="true"></i> 新增药品</a>
+    <div style="margin: 10px 0;">
+        <a class="btn btn-primary" data-toggle="modal" data-target="#addModal">
+            <i class="fa fa-plus-square" aria-hidden="true"></i> 新增药品
+        </a>
     </div>
+        <div class="panel panel-default">
+            <div class="panel-heading"><i class="fa fa-warning" aria-hidden="true"/></i> 临期药品</div>
+            <div class="panel-body">
+                {% for item in medicine_dict.临期 %}
+                     <div class="item">
+                        <a href="#" class="title"
+                           style="background-color: {{ item.get_color_display }};">{{ item.name }}</a>
+                        <div class="info">
+                            <div>
+                                <span>{{ item.creator.username }}</span>
+                            </div>
+                            <div>
+                                <i class="fa fa-user-o" aria-hidden="true"></i>
+                                <span>{{ item.join_count }}</span>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title"><i class="fa fa-magnet" aria-hidden="true"/></i> 正常药品</h3>
+            </div>
+            <div class="panel-body">
+                {% for item in medicine_dict.正常 %}
+                    <div class="item">
+                        <a href="#" class="title"
+                           style="background-color: {{ item.get_color_display }};">{{ item.name }}</a>
+                        <div class="info">
+                            <div>
+                                <span>{{ item.creator.username }}</span>
+                            </div>
+                            <div>
+                                <i class="fa fa-user-o" aria-hidden="true"></i>
+                                <span>{{ item.join_count }}</span>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+
+            </div>
+
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading"><i class="fa fa-trash" aria-hidden="true"/></i> 过期药品</div>
+            <div class="panel-body">
+                {% for item in medicine_dict.过期 %}
+                     <div class="item">
+                        <a href="#" class="title"
+                           style="background-color: {{ item.get_color_display }};">{{ item.name }}</a>
+                        <div class="info">
+                            <div>
+                                <span>{{ item.creator.username }}</span>
+                            </div>
+                            <div>
+                                <i class="fa fa-user-o" aria-hidden="true"></i>
+                                <span>{{ item.join_count }}</span>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title"><i class="fa fa-tasks" aria-hidden="true"/></i> 我创建的药品</h3>
+            </div>
+            <div class="panel-body">
+                {% for item in medicine_dict.my %}
+                     <div class="item">
+                        <a href="#" class="title"
+                           style="background-color: {{ item.get_color_display }};">{{ item.name }}</a>
+                        <div class="info">
+                            <div>
+                                <span>{{ item.creator.username }}</span>
+                            </div>
+                            <div>
+                                <i class="fa fa-user-o" aria-hidden="true"></i>
+                                <span>{{ item.join_count }}</span>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title"><i class="fa fa-handshake-o" aria-hidden="true"></i> 我参与管理的药品</h3>
+            </div>
+            <div class="panel-body">
+                {% for item in medicine_dict.join %}
+                     <div class="item">
+                        <a href="#" class="title"
+                           style="background-color: {{ item.get_color_display }};">{{ item.name }}</a>
+                        <div class="info">
+                            <div>
+                                <span>{{ item.creator.username }}</span>
+                            </div>
+                            <div>
+                                <i class="fa fa-user-o" aria-hidden="true"></i>
+                                <span>{{ item.join_count }}</span>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">新增药品</h4>
+                </div>
+                <div class="modal-body">
+                    <form id="addForm">
+                        {#                        手动写，基于modelform生成#}
+                        {#                        <div class="form-group">#}
+                        {#                            <label for="exampleInputEmail1">药品名</label>#}
+                        {#                            <input type="email" class="form-control" id="exampleInputEmail1" placeholder="Email">#}
+                        {#                        </div>#}
+                        {#                        <div class="form-group">#}
+                        {#                            <label for="exampleInputPassword1">颜色</label>#}
+                        {#                            <input type="password" class="form-control" id="exampleInputPassword1"#}
+                        {#                                   placeholder="Password">#}
+                        {#                        </div>#}
+                        {#                        <div class="form-group">#}
+                        {#                            <label for="exampleInputFile">描述</label>#}
+                        {#                            <textarea name="" id="" cols="30" rows="10" class="form-control"></textarea>#}
+                        {#                        </div>#}
+                        {% csrf_token %}
+                        {% for field in form %}
+                            <div class="form-group">
+                                <label for={{ field.id_for_label }}>{{ field.label }}</label>
+                                {{ field }}
+                                <span class="error-msg"></span>
+                            </div>
+                        {% endfor %}
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取 消</button>
+                    <button id="btnSubmit" type="button" class="btn btn-primary">确 定</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block js %}
+    <script>
+        $(function () {
+            bindSubmit();
+        });
+
+        function bindSubmit() {
+            $('#btnSubmit').click(function () {
+                $.ajax({
+                    url: "/project/list/",
+                    type: "POST",
+                    data: $("#addForm").serialize(),
+                    dataType: "JSON",
+                    success: function (res) {
+                        console.log(res);
+                        if (res.status) {
+                            location.href = location.href;//相当于是一个刷新
+                        } else {
+                            console.log(res);
+                            $.each(res.error, function (key, value) {
+                                {#循环res这个字典，每次循环执行function函数，拿到key加value，然后字符串拼接找到这个框的next就是span显示错误#}
+                                $('#id_' + key).next().text(value[0]);
+                            })
+
+                        }
+                    }
+
+                })
+            })
+        }
+    </script>
 {% endblock %}

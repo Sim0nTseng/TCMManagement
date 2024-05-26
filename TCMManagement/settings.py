@@ -76,7 +76,7 @@ WSGI_APPLICATION = 'TCMManagement.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'tcmmanagement',  # 数据库名字
+        'NAME': 'yzwy',  # 数据库名字
         'USER': 'root',
         'PASSWORD': 'qq1794521352',
         'HOST': '127.0.0.1',  # 安装MYsql的电脑

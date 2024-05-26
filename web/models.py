@@ -1,58 +1,64 @@
+
 from django.db import models
 
+
 # Create your models here.
-#用户表
+# 用户表
 class UserInfo(models.Model):
-    username = models.CharField(max_length=32,verbose_name='用户名',db_index=True) #db_index是创建索引，以后根据这个查速度就会很快
+    username = models.CharField(max_length=32, verbose_name='用户名', db_index=True)  # db_index是创建索引，以后根据这个查速度就会很快
     # 本质还是字符串
-    email = models.EmailField(verbose_name='邮箱',max_length=32)
-    mobile_phone = models.CharField(verbose_name='手机号',max_length=32)
-    password = models.CharField(max_length=32,verbose_name='密码')
+    email = models.EmailField(verbose_name='邮箱', max_length=32)
+    mobile_phone = models.CharField(verbose_name='手机号', max_length=32)
+    password = models.CharField(max_length=32, verbose_name='密码')
+    create_time = models.DateTimeField(auto_now_add=True, verbose_name="创建时间")
 
     # price_policy=models.ForeignKey(verbose_name='价格策略',to='Price',null=True,blank=True,on_delete=models.CASCADE)
 
-#价格策略表
+
+# 价格策略表
 class Price(models.Model):
-    category_choices=(
-        (1,"Free"),
-        (2,"VIP"),
-        (3,"SVIP")
+    category_choices = (
+        (1, "Free"),
+        (2, "VIP"),
+        (3, "SVIP")
     )
     # 价格政策
-    price_choices=(
-        (1,0),
-        (2,199),
-        (3,299)
+    price_choices = (
+        (1, 0),
+        (2, 199),
+        (3, 299)
     )
-    title = models.CharField(max_length=128,verbose_name='标题',null=True)
-    category=models.SmallIntegerField(verbose_name='用户级别',choices=category_choices,default=1)
-    price = models.SmallIntegerField(verbose_name='价格',choices=price_choices,default=1)
+    title = models.CharField(max_length=128, verbose_name='标题', null=True)
+    category = models.SmallIntegerField(verbose_name='用户级别', choices=category_choices, default=1)
+    price = models.SmallIntegerField(verbose_name='价格', choices=price_choices, default=1)
 
-    project_num=models.PositiveIntegerField(verbose_name="项目数")
-    project_member=models.PositiveIntegerField(verbose_name="项目成员数")
+    project_num = models.PositiveIntegerField(verbose_name="项目数")
+    project_member = models.PositiveIntegerField(verbose_name="项目成员数")
 
-    create_time = models.DateTimeField(auto_now_add=True,verbose_name="创建时间")
+    create_time = models.DateTimeField(auto_now_add=True, verbose_name="创建时间")
+
 
 # 交易记录表
 class Transaction(models.Model):
     """交易记录"""
-    status_choice=(
-        (1,"未支付"),
-        (2,"已支付")
+    status_choice = (
+        (1, "未支付"),
+        (2, "已支付")
     )
-    status=models.SmallIntegerField(verbose_name="状态",choices=status_choice,default=1)
+    status = models.SmallIntegerField(verbose_name="状态", choices=status_choice, default=1)
 
-    order=models.CharField(verbose_name="订单号",max_length=64,unique=True)
-    user=models.ForeignKey(verbose_name="用户",to="UserInfo",on_delete=models.CASCADE)
-    price_policy=models.ForeignKey(verbose_name="价格策略",to="Price",on_delete=models.CASCADE)
+    order = models.CharField(verbose_name="订单号", max_length=64, unique=True)
+    user = models.ForeignKey(verbose_name="用户", to="UserInfo", on_delete=models.CASCADE)
+    price_policy = models.ForeignKey(verbose_name="价格策略", to="Price", on_delete=models.CASCADE)
 
-    count=models.IntegerField(verbose_name="数量（年）",help_text='0表示无限期')
-    price=models.IntegerField(verbose_name="实际支付费用")
+    count = models.IntegerField(verbose_name="数量（年）", help_text='0表示无限期')
+    price = models.IntegerField(verbose_name="实际支付费用")
 
-    start_datetime=models.DateTimeField(verbose_name="开始时间",null=True,blank=True)
-    end_datetime=models.DateTimeField(verbose_name="结束时间",null=True,blank=True)
+    start_datetime = models.DateTimeField(verbose_name="开始时间", null=True, blank=True)
+    end_datetime = models.DateTimeField(verbose_name="结束时间", null=True, blank=True)
 
-    create_datetime=models.DateTimeField(auto_now_add=True,verbose_name="创建时间")
+    create_datetime = models.DateTimeField(auto_now_add=True, verbose_name="创建时间")
+
 
 #药品表
 class Medicine(models.Model):
@@ -92,23 +98,24 @@ class Medicine(models.Model):
     #干湿保存方法
     keep=models.SmallIntegerField(verbose_name='保存方法',choices=sava_mothod,default=1)
     #入库时间
-    warehousing_time=models.DateTimeField(verbose_name='入库时间')
-    #过期时间
+    warehousing_time=models.DateTimeField(verbose_name='入库时间',auto_now_add=True)
+    # 过期时间
     expiry_date=models.DateTimeField(verbose_name='过期时间')
     #库存
     stocks=models.IntegerField(verbose_name='库存（Kg）')
     #余量
-    margin=models.IntegerField(verbose_name='余量（Kg）')
+    # margin=models.IntegerField(verbose_name='余量（Kg）')
     #记录人
-    people=models.ForeignKey(verbose_name='记录人',to="UserInfo",on_delete=models.CASCADE)
+    creator=models.ForeignKey(verbose_name='记录人',to="UserInfo",on_delete=models.CASCADE,null=True,blank=True)
     #创建时间
     create_time=models.DateTimeField(auto_now_add=True,verbose_name="创建时间")
 
-#药品管理员
+
+# 药品管理员
 class ProjectUser(models.Model):
-    user=models.ForeignKey(verbose_name="任务下发者",to="UserInfo",on_delete=models.CASCADE)
-    task=models.ForeignKey(verbose_name="任务",to="Medicine",on_delete=models.CASCADE)
-    star=models.BooleanField(verbose_name="星标",default=False)
+    """药品管理添加者"""
+    participter = models.ForeignKey(verbose_name="任务参与者", to="UserInfo", on_delete=models.CASCADE)
+    # 传入一整条 object
+    task = models.ForeignKey(verbose_name="药品任务", to='Medicine', on_delete=models.CASCADE)
 
-    create_time=models.DateTimeField(auto_now_add=True,verbose_name="加入时间")
-
+    create_time = models.DateTimeField(auto_now_add=True, verbose_name="加入时间")
