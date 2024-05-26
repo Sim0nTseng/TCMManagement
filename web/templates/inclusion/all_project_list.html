@@ -1,0 +1,23 @@
+ <ul class="nav navbar-nav">
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                       aria-expanded="false" style="color: white">任 务<span class="caret"></span></a>
+                    <ul class="dropdown-menu active">
+                    {% if my %}
+                        <li><i class="fa fa-tasks" aria-hidden="true"/></i>我创建的项目</li>
+                        {% for item in my %}
+                            <li><a href="#">{{ item.name }}</a></li>
+                        {% endfor %}
+                    {% endif %}
+                    {% if join %}
+                        <li role="separator" class="divider"></li>
+                        <li><i class="fa fa-handshake-o" aria-hidden="true"></i>我参与的项目</li>
+                        {% for item in join %}
+                            <li><a href="#">{{ item.name }}</a></li>
+                        {% endfor %}
+                    {% endif %}
+
+                        <li role="separator" class="divider"></li>
+                        <li><a href="/project/list/">所有项目</a></li>
+                    </ul>
+ </ul>
