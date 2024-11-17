@@ -11,10 +11,9 @@ class ProjectForm(BootStrapForm,forms.ModelForm):
 
     class Meta:
         model=models.Medicine
-        fields=('name','color','EXP','keep','stocks','desc')
+        fields=('name','EXP','keep','stocks','desc')
         widgets={
             'desc':forms.Textarea,
-            'color':ColorRadioSelect(attrs={'class':'color-radio'})
         }
 
     def __init__(self,request,*args,**kwargs):

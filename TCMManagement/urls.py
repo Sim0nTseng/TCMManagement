@@ -15,22 +15,35 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.template.defaulttags import url
 from django.urls import path
-from django.conf.urls import include
 
-from web.views import account,home,project
+from web.views import account, home, project, manage, wiki,file
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('register/', account.register),
-    path('send/sms/',account.send_sms),
-    path('login/sms/',account.login_sms),
-    path('login/',account.login),
-    path('images/code/',account.image_code),
-    path('index/',home.index),
-    path('logout/',home.logout),
+    path('send/sms/', account.send_sms),
+    path('login/sms/', account.login_sms),
+    path('login/', account.login),
+    path('images/code/', account.image_code),
+    path('index/', home.index),
+    path('logout/', home.logout),
 
     # 项目管理
-    path('project/list/',project.project_list),
-    ]
+    path('project/list/', project.project_list),
+
+    # 项目管理
+    path('manage/<int:nid>/dashboard/', manage.manage_dashboard),
+    path('manage/<int:nid>/issue/', manage.manage_issue),
+
+    # wiki
+    path('manage/<int:nid>/wiki/', wiki.wiki),
+    path('manage/<int:nid>/wiki/add/', wiki.wiki_add),
+    path('manage/<int:nid>/wiki/catalog/', wiki.wiki_catalog),
+    path('manage/<int:nid>/wiki/delete/', wiki.wiki_delete),
+    path('manage/<int:nid>/wiki/edit/', wiki.wiki_edit),
+    path('manage/<int:nid>/wiki/upload/', wiki.wiki_upload),
+
+    # File
+    path('manage/<int:nid>/file/', file.File),
+]

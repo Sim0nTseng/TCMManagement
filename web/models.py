@@ -64,13 +64,9 @@ class Transaction(models.Model):
 class Medicine(models.Model):
 
     COLOR_CHOICES = (
-        (1, "#56b8eb"),  # 56b8eb
-        (2, "#f28033"),  # f28033
-        (3, "#ebc656"),  # ebc656
-        (4, "#a2d148"),  # a2d148
-        (5, "#20BFA4"),  # #20BFA4
-        (6, "#7461c2"),  # 7461c2,
-        (7, "#20bfa3"),  # 20bfa3,
+        (1, "#FF0000"),  # 56b8eb 红色
+        (2, "#98FB98"),  # f28033 绿色
+        (3, "#FFB90F"),  # ebc656 黄色
     )
 
     STATUS_CHOICES = (
@@ -85,6 +81,9 @@ class Medicine(models.Model):
         (3,"高湿度保存"),
         (4,"冷藏")
     )
+
+    bucket=models.CharField(verbose_name="COS桶", max_length=128)
+    region=models.CharField(verbose_name="COS区域", max_length=32)
 
     #项目已使用的管理药品数
     use_medicine=models.IntegerField(verbose_name="已使用管理药品数",default=0)
@@ -117,5 +116,32 @@ class ProjectUser(models.Model):
     participter = models.ForeignKey(verbose_name="任务参与者", to="UserInfo", on_delete=models.CASCADE)
     # 传入一整条 object
     task = models.ForeignKey(verbose_name="药品任务", to='Medicine', on_delete=models.CASCADE)
-
     create_time = models.DateTimeField(auto_now_add=True, verbose_name="加入时间")
+
+class Wiki(models.Model):
+    """wiki文章"""
+    medicine = models.ForeignKey(verbose_name="药品",to="Medicine", on_delete=models.CASCADE)
+    title = models.CharField(max_length=32, verbose_name="标题")
+    content = models.TextField(verbose_name="内容/回复")
+    depth=models.IntegerField(verbose_name="深度",default=1)
+    # 要做子关联
+    parent=models.ForeignKey(verbose_name="上级任务",to="Wiki",on_delete=models.CASCADE,null=True,blank=True,related_name="children",default=None)
+
+
+
+class File(models.Model):
+    """文件"""
+    medicine = models.ForeignKey(verbose_name="药品", to="Medicine", on_delete=models.CASCADE)
+    file_type_choices = (
+        (1, "文件"),
+        (2, "文件夹"),
+    )
+    file_type = models.SmallIntegerField(verbose_name="类型", choices=file_type_choices)
+    name = models.CharField(verbose_name="文件夹名称", max_length=32,help_text="文件/文件夹名")
+    key=models.CharField(verbose_name="文件存储在COS中的key",max_length=128,null=True,blank=True)
+    file_size=models.IntegerField(verbose_name="文件大小",null=True,blank=True)
+    file_path = models.CharField(verbose_name="文件路径", max_length=255,null=True,blank=True)
+    parent = models.ForeignKey(verbose_name="父级目录", to="self", related_name='child',null=True, blank=True,on_delete=models.CASCADE)
+    create_datetime = models.DateTimeField(auto_now_add=True, verbose_name="创建时间")
+    update_user=models.ForeignKey(verbose_name="最近更新者", to="UserInfo",on_delete=models.CASCADE)
+    update_datetime = models.DateTimeField(auto_now=True, verbose_name="更新时间")

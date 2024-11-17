@@ -1,0 +1,198 @@
+{% extends 'layout/manage.html' %}
+{% load static %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'plugins/editor-md/editor.md-master/css/editormd.preview.min.css' %}">
+    <style>
+        .panel-default .panel-heading {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+        }
+
+        .panel-default > .panel-heading a {
+            text-decoration: none;
+        }
+
+        .panel-default > .panel-heading span {
+            padding: 0 5px;
+        }
+
+    </style>
+
+{% endblock %}
+
+
+{% block title %}文件管理{% endblock %}
+
+{% block content %}
+    <div class="container-fluid">
+        <div class="panel panel-default" style="margin-top: 20px">
+            <!-- Default panel contents -->
+            <div class="panel-heading">
+                <div>
+                    <a href="http://localhost:8000/manage/{{ request.People.project.id }}/file/">
+                        <i class="fa fa-home" aria-hidden="true"></i>
+                        <span>文件库</span>
+                        {% for record in bredcrumb_list %}
+                            <a href="http://localhost:8000/manage/{{ request.People.project.id }}/file/?folder={{ record.id }}">
+                                <i class="fa fa-caret-right" aria-hidden="true"></i>
+                                <span>{{ record.name }}</span>
+                            </a>
+                        {% endfor %}
+                    </a>
+                </div>
+                <div>
+                    <a class="btn btn-success btn-xs" data-toggle="modal" data-target="#addModal"
+                       data-whatever="新建文件夹">
+                        <i class="fa fa-plus-circle" aria-hidden="true"></i>新建文件夹</a>
+                    </a><a class="btn btn-success btn-xs" data-toggle="modal" data-target="#addModal"
+                           data-whatever="编辑文件夹">
+                    <i class="fa fa-plus-circle" aria-hidden="true"></i>编辑文件夹</a>
+                    </a>
+                </div>
+            </div>
+            <!-- Table -->
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>名称</th>
+                    <th>文件大小</th>
+                    <th>更新者</th>
+                    <th>更新时间</th>
+                    <th>操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for item in file_object_list %}
+                    <tr>
+                        <th>
+                            {% if item.file_type == 2 %}
+                                <a href="http://localhost:8000/manage/{{ request.People.project.id }}/file/?folder={{ item.id }}">
+                                    <i class="fa fa-folder" aria-hidden="true"></i>
+                                    {{ item.name }}
+                                </a>
+                            {% else %}
+                                <i class="fa fa-file" aria-hidden="true"></i>
+                                {{ item.name }}
+                            {% endif %}
+                        </th>
+                        <th>
+                            {% if item.file_type == 1 %}
+                                {{ item.file_size }}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </th>
+                        <td>{{ item.update_user.username }}</td>
+                        <td>{{ item.update_datetime }}</td>
+                        <td>
+                            {% if item.file_type == 2 %}
+                                <a class="btn btn-default btn-xs"
+                                   data-toggle="modal"
+                                   data-target="#addModal"
+                                   data-name="{{ item.name }}"
+                                   data-fid="{{ item.id }}"
+                                   data-whatever="编辑文件夹"
+                                >
+                                    <i class="fa fa-pencil-square-o"></i>
+                                </a>
+                            {% endif %}
+                            <a href="">删除</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+    <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Modal title</h4>
+                </div>
+                <div class="modal-body">
+                    <form id="form">
+                        {% csrf_token %}
+                        <input class="hidden" type="text" name="fid" id="fid">
+                        {% for filed in form %}
+                            <div class="form-group">
+                                <label for="{{ filed.id_for_label }}">{{ filed.label }}</label>
+                                {{ filed }}
+                                <span class="error-msg">{{ filed.errors.0 }}</span>
+                            </div>
+                        {% endfor %}
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取 消</button>
+                    <button type="button" class="btn btn-primary" id="btnFormSubmit">确 定</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block js %}
+    <script>
+        var FILE_URL = "http://localhost:8000/manage/{{ request.People.project.id }}/file/"
+        $(function () {
+            initAddModal();
+            bindModelSubmit();
+        });
+
+        function initAddModal() {
+            $('#addModal').on('show.bs.modal', function (event) {
+                var button = $(event.relatedTarget);
+                var recipient = button.data('whatever');
+                var name = button.data('name');
+                var fid = button.data('fid');
+                var modal = $(this);
+                modal.find('.modal-title').text(recipient);
+
+                if (fid) {
+                    //编辑
+                    //name
+                    modal.find("#id_name").val(name);
+                    modal.find("#fid").val(fid);
+                    console.log(fid);
+                } else {
+                    console.log(fid);
+                    modal.find(".error-msg").empty();
+                    {#document.getElementById('form').reset();#}
+                    $('#form')[0].reset();
+                }
+
+
+                //编辑
+            })
+        }
+
+
+        function bindModelSubmit() {
+            $('#btnFormSubmit').click(function () {
+                $.ajax({
+                    url: location.href,
+                    type: 'post',
+                    data: $('#form').serialize(),
+                    dataType: 'json',
+                    success: function (res) {
+                        if (res.status) {
+                            console.log(res);
+                            location.reload();
+                        } else {
+                            $.each(res.error, function (key, value) {
+                                $('#id_' + key).next().text(value[0]);
+                            })
+                        }
+                    }
+                })
+            })
+        }
+    </script>
+{% endblock %}

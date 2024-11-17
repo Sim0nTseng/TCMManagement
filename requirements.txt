@@ -1,5 +1,5 @@
 asgiref==3.8.1
-Django==5.0.4
+Django==4.2.14
 mysqlclient==2.2.4
 qcloudsms_py==0.1.4
 redis==5.0.3

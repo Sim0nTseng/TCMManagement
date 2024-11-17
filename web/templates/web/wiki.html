@@ -1,0 +1,145 @@
+{% extends 'layout/manage.html' %}
+{% load static %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'plugins/editor-md/editor.md-master/css/editormd.preview.min.css' %}">
+    <style>
+        .panel-body {
+            padding: 0;
+        }
+
+        .panel-default .panel-heading {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+        }
+
+        .title-list {
+            border-right: 1px solid #dddddd;
+            min-height: 500px;
+        }
+
+        .title-list ul {
+            padding-left: 15px;
+        }
+
+        .title-list ul a {
+            display: block;
+            padding: 5px 0;
+        }
+
+        .content {
+            border-left: 1px solid #dddddd;
+            min-height: 600px;
+            margin-left: -1px;
+        }
+    </style>
+{% endblock %}
+
+{% block title %}任务交流{% endblock %}
+{% block content %}
+    <div class="container-fluid">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <div>
+                    <i class="fa fa-comments" aria-hidden="true"/></i>任务交流区
+                </div>
+                <div class="function">
+                    <a type="button" class="btn btn-success btn-xs"
+                       href="/manage/{{ request.People.project.id }}/wiki/add">
+                        <i class="fa fa-plus" aria-hidden="true"/></i> 新建
+                    </a>
+                    {% if wiki_obj %}
+                        <a type="button" class="btn btn-danger btn-xs"
+                           href="/manage/{{ request.People.project.id }}/wiki/delete/?wiki_id={{ wiki_obj.id }}">
+                        <i class="fa fa-trash" aria-hidden="true"/></i> 删除
+                        </a>
+
+                        <a type="button" class="btn btn-primary btn-xs"
+                           href="/manage/{{ request.People.project.id }}/wiki/edit/?wiki_id={{ wiki_obj.id }}">
+                            <i class="fa fa-edit" aria-hidden="true"/></i> 编辑
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="panel-body">
+                <div class="col-sm-3 title-list">
+                    <ul id="catalog">
+                    </ul>
+                </div>
+                {% if wiki_obj %}
+                    <div class="col-sm-9 content">
+                        <div id="previewMarkdown">
+                            <textarea>{{ wiki_obj.content }}</textarea>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="col-sm-9 content">
+                        <div style="text-align: center;margin-top:50px;">
+                            <h4>《{{ request.People.project.name }}》工作任务交流区 </h4>
+                            <a href="/manage/{{ request.People.project.id }}/wiki/add">
+                                <i class="fa fa-plus" aria-hidden="true"/></i> 新建文章
+                            </a>
+                        </div>
+                    </div>
+                {% endif %}
+                <div></div>
+            </div>
+        </div>
+
+    </div>
+{% endblock %}
+
+{% block js %}
+    <script src="{% static 'plugins/editor-md/editor.md-master/editormd.min.js' %}"></script>
+    <script src="{% static 'plugins/editor-md/editor.md-master/lib/marked.min.js' %}"></script>
+    <script src="{% static 'plugins/editor-md/editor.md-master/Lib/prettify.min.js' %}"></script>
+    <script src="{% static 'plugins/editor-md/editor.md-master/lib/raphael.min.js' %}"></script>
+    <script src="{% static 'plugins/editor-md/editor.md-master/lib/underscore.min.js' %}"></script>
+    <script src="{% static 'plugins/editor-md/editor.md-master/lib/sequence-diagram.min.js' %}"></script>
+    <script src="{% static 'plugins/editor-md/editor.md-master/lib/flowchart.min.js' %}"></script>
+    <script src="{% static 'plugins/editor-md/editor.md-master/Lib/jquery.flowchart.min.js' %}"></script>
+    <script>
+        var WIKI_DETAIL_URL = "http://localhost:8000/manage/{{ request.People.project.id }}/wiki/";
+        $(function () {
+            initCatalog();
+            initPreviewMarkdown()
+        });
+
+        function initPreviewMarkdown() {
+            editormd.markdownToHTML("previewMarkdown", {
+                htmlDecode: "style,script,iframe",
+                emoji: true,
+                taskList: true,
+                tex: true,
+                flowChart: true,
+                sequenceDiagram: true,
+            })
+        }
+
+        function initCatalog() {
+            $.ajax({
+                url: '/manage/{{ request.People.project.id }}/wiki/catalog',
+                type: 'GET',
+                dataType: 'JSON',
+                success: function (res) {
+                    if (res.status) {
+                        $.each(res.data, function (index, item) {
+                            var href = WIKI_DETAIL_URL + "?wiki_id=" + item.id;
+                            var li = $("<li>").attr("id", "id_" + item.id).append($('<a>').attr('href', href).text(item.title)).append($('<ul>'));
+                            if (!item.parent_id) {
+                                $("#catalog").append(li);
+                            } else {
+                                $("#id_" + item.parent_id).children("ul").append(li);
+                            }
+                        })
+
+                    } else {
+                        alert("初始化目录失败")
+                    }
+                }
+            })
+        }
+
+    </script>
+{% endblock %}

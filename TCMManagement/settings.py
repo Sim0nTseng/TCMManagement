@@ -131,6 +131,13 @@ TENCENT_SMS_APP_ID = 6666666666
 # 腾讯云短信应用的 app_key
 TENCENT_SMS_APP_KEY = "6666666666666666666666"
 
+# 腾讯云短信应用的 app_id
+TENCENT_COS_APP_ID = ""
+
+# 腾讯云短信应用的 app_key
+TENCENT_COS_APP_KEY = " "
+
+
 # 腾讯云短信签名内容
 TENCENT_SMS_SIGN = "Python之路"
 
@@ -139,8 +146,6 @@ TENCENT_SMS_TEMPLATE = {
     'login': 2125166
 }
 
-TENCENT_COS_ID = "COS的secret_id"
-TENCENT_COS_KEY = "COS的secret_key"
 
 ###########白名单，无需登录也可以访问的网站
 WHITE_REGEX_URL_LIST = [

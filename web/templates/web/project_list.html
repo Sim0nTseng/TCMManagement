@@ -1,7 +1,7 @@
 {% extends 'layout/manage.html' %}
 
 {% block css %}
-   <style>
+    <style>
         .project {
             margin-top: 10px;
         }
@@ -79,23 +79,26 @@
         .color-radio input[type="radio"]:checked + .cycle {
             border: 2px solid black;
         }
+
+
     </style>
 {% endblock %}
 
 {% block content %}
     <div class="container-fluid project">
-    <div style="margin: 10px 0;">
-        <a class="btn btn-primary" data-toggle="modal" data-target="#addModal">
-            <i class="fa fa-plus-square" aria-hidden="true"></i> 新增药品
-        </a>
-    </div>
+        <div style="margin: 10px 0;">
+            <a class="btn btn-primary" data-toggle="modal" data-target="#addModal">
+                <i class="fa fa-plus-square" aria-hidden="true"></i> 新增药品
+            </a>
+        </div>
         <div class="panel panel-default">
             <div class="panel-heading"><i class="fa fa-warning" aria-hidden="true"/></i> 临期药品</div>
             <div class="panel-body">
                 {% for item in medicine_dict.临期 %}
-                     <div class="item">
-                        <a href="#" class="title"
-                           style="background-color: {{ item.get_color_display }};">{{ item.name }}</a>
+                    <div class="item">
+                        <a href="/manage/{{ item.id }}/dashboard" class="title"
+                           style="background-color: {{ item.get_color_display }};font-family: 宋体;color: #0e0e0e;font-weight: bold">{{ item.name }}</a>
+
                         <div class="info">
                             <div>
                                 <span>{{ item.creator.username }}</span>
@@ -117,8 +120,8 @@
             <div class="panel-body">
                 {% for item in medicine_dict.正常 %}
                     <div class="item">
-                        <a href="#" class="title"
-                           style="background-color: {{ item.get_color_display }};">{{ item.name }}</a>
+                        <a href="/manage/{{ item.id }}/dashboard" class="title"
+                           style="background-color: {{ item.get_color_display }};font-family: 宋体;color: #0e0e0e;font-weight: bold">{{ item.name }}</a>
                         <div class="info">
                             <div>
                                 <span>{{ item.creator.username }}</span>
@@ -138,9 +141,9 @@
             <div class="panel-heading"><i class="fa fa-trash" aria-hidden="true"/></i> 过期药品</div>
             <div class="panel-body">
                 {% for item in medicine_dict.过期 %}
-                     <div class="item">
-                        <a href="#" class="title"
-                           style="background-color: {{ item.get_color_display }};">{{ item.name }}</a>
+                    <div class="item">
+                        <a href="/manage/{{ item.id }}/dashboard" class="title"
+                           style="background-color: {{ item.get_color_display }};font-family: 宋体;color: #0e0e0e;font-weight: bold">{{ item.name }}</a>
                         <div class="info">
                             <div>
                                 <span>{{ item.creator.username }}</span>
@@ -161,9 +164,9 @@
             </div>
             <div class="panel-body">
                 {% for item in medicine_dict.my %}
-                     <div class="item">
-                        <a href="#" class="title"
-                           style="background-color: {{ item.get_color_display }};">{{ item.name }}</a>
+                    <div class="item">
+                        <a href="/manage/{{ item.id }}/dashboard" class="title"
+                           style="background-color: {{ item.get_color_display }};font-family: 宋体;color: #0e0e0e;font-weight: bold">{{ item.name }}</a>
                         <div class="info">
                             <div>
                                 <span>{{ item.creator.username }}</span>
@@ -184,9 +187,9 @@
             </div>
             <div class="panel-body">
                 {% for item in medicine_dict.join %}
-                     <div class="item">
-                        <a href="#" class="title"
-                           style="background-color: {{ item.get_color_display }};">{{ item.name }}</a>
+                    <div class="item">
+                        <a href="/manage/{{ item.id }}/dashboard" class="title"
+                           style="background-color: {{ item.get_color_display }};font-family: 宋体;color: #0e0e0e;font-weight: bold">{{ item.name }}</a>
                         <div class="info">
                             <div>
                                 <span>{{ item.creator.username }}</span>
@@ -213,20 +216,6 @@
                 </div>
                 <div class="modal-body">
                     <form id="addForm">
-                        {#                        手动写，基于modelform生成#}
-                        {#                        <div class="form-group">#}
-                        {#                            <label for="exampleInputEmail1">药品名</label>#}
-                        {#                            <input type="email" class="form-control" id="exampleInputEmail1" placeholder="Email">#}
-                        {#                        </div>#}
-                        {#                        <div class="form-group">#}
-                        {#                            <label for="exampleInputPassword1">颜色</label>#}
-                        {#                            <input type="password" class="form-control" id="exampleInputPassword1"#}
-                        {#                                   placeholder="Password">#}
-                        {#                        </div>#}
-                        {#                        <div class="form-group">#}
-                        {#                            <label for="exampleInputFile">描述</label>#}
-                        {#                            <textarea name="" id="" cols="30" rows="10" class="form-control"></textarea>#}
-                        {#                        </div>#}
                         {% csrf_token %}
                         {% for field in form %}
                             <div class="form-group">
