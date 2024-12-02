@@ -26,11 +26,12 @@ class registerModelform(forms.ModelForm):
         },
         widget=forms.PasswordInput())
     confirm_password = forms.CharField(label="确认密码", widget=forms.PasswordInput(render_value=True))  # 这一句话加上就不会清空了
-    code = forms.CharField(label="验证码", widget=forms.TextInput())
+    # code = forms.CharField(label="验证码", widget=forms.TextInput())
 
     class Meta:
         model = models.UserInfo
-        fields = ['username', 'email', 'password', 'confirm_password', 'mobile_phone', 'code']
+        # fields = ['username', 'email', 'password', 'confirm_password', 'mobile_phone', 'code']
+        fields = ['username', 'email', 'password', 'confirm_password', 'mobile_phone', ]
 
     def __init__(self, *args, **kwargs):
         # 相当又写了一编但是没变化
@@ -47,13 +48,13 @@ class registerModelform(forms.ModelForm):
             raise ValidationError("喵喵喵，用户名已存在")
         return username
 
-    def clean_email(self):
-        # 写了和没写一样
-        email = self.cleaned_data['email']
-        exists = models.UserInfo.objects.filter(email=email).exists()
-        if exists:
-            raise ValidationError("喵喵喵，该邮箱已存注册")
-        return email
+    # def clean_email(self):
+    #     # 写了和没写一样
+    #     email = self.cleaned_data['email']
+    #     exists = models.UserInfo.objects.filter(email=email).exists()
+    #     if exists:
+    #         raise ValidationError("喵喵喵，该邮箱已存注册")
+    #     return email
 
     def clean_password(self):
         pwd = self.cleaned_data['password']
@@ -76,21 +77,21 @@ class registerModelform(forms.ModelForm):
             raise ValidationError("该手机号已注册")
         return mobile_phone
 
-    def clean_code(self):
-        code = self.cleaned_data['code']
-        mobile_phone = self.cleaned_data.get('mobile_phone')
-        if not mobile_phone:
-            return code
-        conn = get_redis_connection()
-        print(mobile_phone)
-        redis_code = conn.get(mobile_phone)
-        if not redis_code:
-            raise ValidationError("验证码失效或未发送，请重试，喵喵")
-        # 从redis中得到的是比特类型的数据，要给他解码
-        redis_str_code = redis_code.decode('utf-8')
-        # 加个strip去除左右两边的空格
-        if code.strip() != redis_str_code:
-            raise ValidationError("验证码错误")
+    # def clean_code(self):
+    #     code = self.cleaned_data['code']
+    #     mobile_phone = self.cleaned_data.get('mobile_phone')
+    #     if not mobile_phone:
+    #         return code
+    #     conn = get_redis_connection()
+    #     print(mobile_phone)
+    #     redis_code = conn.get(mobile_phone)
+    #     if not redis_code:
+    #         raise ValidationError("验证码失效或未发送，请重试，喵喵")
+    #     # 从redis中得到的是比特类型的数据，要给他解码
+    #     redis_str_code = redis_code.decode('utf-8')
+    #     # 加个strip去除左右两边的空格
+    #     if code.strip() != redis_str_code:
+    #         raise ValidationError("验证码错误")
 
 
 class SendSmsForm(forms.Form):

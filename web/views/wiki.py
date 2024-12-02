@@ -1,5 +1,6 @@
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render, redirect
+from django.views.decorators.clickjacking import xframe_options_exempt
 from django.views.decorators.csrf import csrf_exempt
 
 from web import models
@@ -77,6 +78,7 @@ def wiki_edit(request,nid):
     return render(request, 'web/wiki_edit.html')
 
 @csrf_exempt
+@xframe_options_exempt
 def wiki_upload(request,nid):
     """markdown上传图片"""
     result = {
@@ -99,10 +101,9 @@ def wiki_upload(request,nid):
         key
     )
 
+
     result['success']= 1,
-    """
-    狗日的现在要钱
-    """
-    result['url']="www.jd.com"
+
+    result['url']=image_url
 
     return JsonResponse(result)

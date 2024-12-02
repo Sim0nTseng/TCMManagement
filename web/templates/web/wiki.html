@@ -52,7 +52,7 @@
                     {% if wiki_obj %}
                         <a type="button" class="btn btn-danger btn-xs"
                            href="/manage/{{ request.People.project.id }}/wiki/delete/?wiki_id={{ wiki_obj.id }}">
-                        <i class="fa fa-trash" aria-hidden="true"/></i> 删除
+                            <i class="fa fa-trash" aria-hidden="true"/></i> 删除
                         </a>
 
                         <a type="button" class="btn btn-primary btn-xs"
@@ -105,6 +105,7 @@
             initCatalog();
             initPreviewMarkdown()
         });
+
 
         function initPreviewMarkdown() {
             editormd.markdownToHTML("previewMarkdown", {

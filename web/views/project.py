@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta, timezone
+from django.db.models import QuerySet
 
 from time import time
 from django.http import JsonResponse
@@ -8,6 +9,7 @@ from web import models
 from web.forms.project import ProjectForm
 
 from utils.tecent.cos import creat_bucket
+
 
 def project_list(request):
     """项目列表"""
@@ -21,9 +23,12 @@ def project_list(request):
         now_time = datetime.now()
         # 获取每个药的时间遍历
         medicines_list = models.Medicine.objects.filter(creator=request.People.user)
-        # 我参与的
-        for row in models.ProjectUser.objects.filter(participter=request.People.user):
-            medicines_list += row.task
+        join_list = models.ProjectUser.objects.filter(participter=request.People.user)
+        related_medicines = []
+        related_medicines.append(medicines_list)
+        for queryset in join_list:
+            related_medicines.append(queryset.task)
+
         # 获取每个obj
         for row in medicines_list:
             # 处理时间字符串,转换为无时区的
@@ -35,15 +40,22 @@ def project_list(request):
             else:
                 models.Medicine.objects.filter(id=row.id).update(status=1, color=2)
 
-        """
-               1. 从数据库中获取两部分数据
-                   我创建的所有项目：所有药品状态
-                   我参与管理的所有项目：所有药品状态
-               2. 提取已星标
-                   列表 = 循环 [我创建的所有项目] + [我参与的所有项目] 把已星标的数据提取
 
-               得到三个列表：星标、创建、参与
-        """
+        for row in join_list:
+            row=row.task
+            # 处理时间字符串,转换为无时区的
+            expiry_date = row.expiry_date.replace(tzinfo=None)
+            if now_time + timedelta(days=20) >= expiry_date and now_time + timedelta(days=20) < expiry_date:
+                models.Medicine.objects.filter(id=row.id).update(status=2, color=3)
+            elif now_time > expiry_date:
+                models.Medicine.objects.filter(id=row.id).update(status=3, color=1)
+            else:
+                models.Medicine.objects.filter(id=row.id).update(status=1, color=2)
+
+            # 1. 从数据库中获取两部分数据
+            #     我创建的所有项目：所有药品状态
+            #     我参与管理的所有项目：所有药品状态
+
         # 遍历过后加入到各自的地方
         medicine_dict = {'临期': [], '过期': [], '正常': [], 'my': [], 'join': []}
 
@@ -72,7 +84,7 @@ def project_list(request):
     if form.is_valid():
         # 为项目创建一个桶
         # "{手机号}-{时间戳}--167868"
-        bucekt="{}-{}-1325585694".format(request.People.user.mobile_phone,str(int(time())*1000),)
+        bucekt = "{}-{}-1325585694".format(request.People.user.mobile_phone, str(int(time()) * 1000), )
         region = "ap-chengdu"
         creat_bucket(bucekt, region)
         # 把桶和区域写入数据库
@@ -80,6 +92,7 @@ def project_list(request):
         form.instance.region = region
         # 验证通过
         form.instance.creator = request.People.user
+
         # 处理过期时间
 
         # 获取存储时间
@@ -89,7 +102,13 @@ def project_list(request):
         expiry_date = (warehousing_time + timedelta(days=EXP * 30)).astimezone(timezone.utc)
         form.instance.expiry_date = expiry_date
         # 创建项目
-        form.save()
+        instance = form.save()
+
+        # 项目初始化问题类型
+        issues_type_object_list = []
+        for item in models.IssuesType.PROJECT_INIT_LIST:
+            issues_type_object_list.append(models.IssuesType(project=instance, title=item))
+        models.IssuesType.objects.bulk_create(issues_type_object_list)
         return JsonResponse({'status': True})
 
     return JsonResponse({'status': False, 'error': form.errors})

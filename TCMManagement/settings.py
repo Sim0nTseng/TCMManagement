@@ -55,7 +55,7 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [BASE_DIR / 'web/templates']
-        ,
+       ,
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -64,6 +64,9 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
+            'libraries': {
+                'issues': 'web.templatetags.issues',
+            },
         },
     },
 ]
@@ -105,13 +108,20 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'zh-hans'
 
-TIME_ZONE = 'UTC'
+#根据时区来获取时间
+# datetime.datetime.now() / datetime.datetime.utcnow() =》UTC时间
+# TIME_ZONE = 'UTC'
+#根据所在的时区来获取时间
+TIME_ZONE = 'Asia/Shanghai'
 
 USE_I18N = True
 
-USE_TZ = True
+# 影响自动生成数据库的时间字段
+# USE_TZ = True，创建UTC时间写入数据库
+# USE_TZ = false，根据Time_ZONE设置的时区来创建时间写入数据库
+USE_TZ = False
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
@@ -137,7 +147,6 @@ TENCENT_COS_APP_ID = ""
 # 腾讯云短信应用的 app_key
 TENCENT_COS_APP_KEY = " "
 
-
 # 腾讯云短信签名内容
 TENCENT_SMS_SIGN = "Python之路"
 
@@ -145,7 +154,6 @@ TENCENT_SMS_TEMPLATE = {
     'register': 2125165,
     'login': 2125166
 }
-
 
 ###########白名单，无需登录也可以访问的网站
 WHITE_REGEX_URL_LIST = [
@@ -155,6 +163,7 @@ WHITE_REGEX_URL_LIST = [
     '/login/',
     '/images/code/',
     '/index/',
+    '/price/',
 ]
 
 try:

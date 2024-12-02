@@ -65,8 +65,9 @@ class AuthMiddleware(MiddlewareMixin):
             request.People.project = medicine_obj
             return
         # 是否为我参与的项目
-        project_user_obj = models.ProjectUser.objects.filter(participter=request.People.user).task.filter(
-            id=nid).first()
+        # Bug 修复：使用双下划线表示模型之间的关系
+        project_user_obj = models.ProjectUser.objects.filter(participter=request.People.user, task__id=nid).first()
+
         if project_user_obj:
             # 是我参与的项目
             request.People.project = project_user_obj

@@ -29,23 +29,33 @@ def manage_menu_list(request):
     # 定义一个列表，包含多个字典，每个字典表示一个菜单选项
     data_list = [
         {
-            'title': '交流',
-            'url': '/manage/' + str(request.People.project.id) + '/wiki/',
-            'class':''
-        },
-        {
             'title': '概览',
             'url': '/manage/' + str(request.People.project.id) + '/dashboard/',
             'class': ''
         },
         {
+            'title': '交流',
+            'url': '/manage/' + str(request.People.project.id) + '/wiki/',
+            'class':''
+        },
+        {
+            'title': '统计',
+            'url': '/manage/' + str(request.People.project.id) + '/statistics/',
+            'class': ''
+        },
+        {
             'title': '问题',
-            'url': '/manage/' + str(request.People.project.id) + '/issue/',
+            'url': '/manage/' + str(request.People.project.id) + '/issues/',
             'class': ''
         },
         {
             'title': '文件',
             'url': '/manage/' + str(request.People.project.id) + '/file/',
+            'class': ''
+        },
+        {
+            'title': '配置',
+            'url': '/manage/' + str(request.People.project.id) + '/setting/',
             'class': ''
         }
     ]
