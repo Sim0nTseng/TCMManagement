@@ -100,7 +100,7 @@
     <script src="{% static 'plugins/editor-md/editor.md-master/lib/flowchart.min.js' %}"></script>
     <script src="{% static 'plugins/editor-md/editor.md-master/Lib/jquery.flowchart.min.js' %}"></script>
     <script>
-        var WIKI_DETAIL_URL = "http://localhost:8000/manage/{{ request.People.project.id }}/wiki/";
+        var WIKI_DETAIL_URL = "{% url 'wiki_list' nid=request.People.project.id %}";
         $(function () {
             initCatalog();
             initPreviewMarkdown()
@@ -120,7 +120,7 @@
 
         function initCatalog() {
             $.ajax({
-                url: '/manage/{{ request.People.project.id }}/wiki/catalog',
+                url: '{% url 'wiki_catalog' nid=request.People.project.id %}',
                 type: 'GET',
                 dataType: 'JSON',
                 success: function (res) {

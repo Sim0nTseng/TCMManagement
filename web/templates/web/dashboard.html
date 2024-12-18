@@ -197,7 +197,7 @@
 {% block js %}
     <script src="{% static 'plugins/highcharts/highcharts.js' %}"></script>
     <script>
-        var INIT_CHART = "http://localhost:8000/manage/{{ request.People.project.id }}/dashboard/charts/";
+        var INIT_CHART = "{% url "charts" nid=request.People.project.id %}";
         Highcharts.setOptions({
             global: {
                 useUTC: false

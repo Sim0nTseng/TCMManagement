@@ -119,12 +119,14 @@
                             <td class="number">
                                 <i class="fa fa-circle text-{{ item.priority }}"></i>
                                 <a target="_blank"
-                                   href="http://localhost:8000/manage/{{ request.People.project.id }}/issues/detail/{{ item.id }}/">{% string_just item.id %}</a>
+                                   href="{% url 'issues_detail' nid=request.People.project.id issues_id=item.id %}">
+                                    {% string_just item.id %}</a>
                             </td>
                             <td class="issue">
                                 <div>
                                     <a target="_blank"
-                                       href="http://localhost:8000/manage/{{ request.People.project.id }}/issues/detail/{{ item.id }}/">{{ item.subject }}</a>
+                                       href="{% url 'issues_detail' nid=request.People.project.id issues_id=item.id %}">
+                                        {{ item.subject }}</a>
                                 </div>
                                 <div class="tags">
                                     <span class="type">
@@ -392,9 +394,9 @@
     <script src="{% static 'plugins/select2/js/i18n/zh-CN.js' %}"></script>
     <script>
         // 假设这里的 request.People.project.id 是正确的获取项目 ID 的方式，如果不是需要修正
-        WIKI_UPLOAD_URL = "http://localhost:8000/manage/{{ request.People.project.id }}/wiki/upload/";
-        POST_ISSUES_URL = "http://localhost:8000/manage/{{ request.People.project.id }}/issues/";
-        INVITE_URL = "http://localhost:8000/manage/{{ request.People.project.id }}/issues/invite/"
+        WIKI_UPLOAD_URL = "{% url "wiki_upload" request.People.project.id %}";
+        POST_ISSUES_URL = "{% url "issues" request.People.project.id %}";
+        INVITE_URL = "{% url "issues_invite" request.People.project.id %}"
 
 
         $(function () {

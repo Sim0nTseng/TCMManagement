@@ -77,7 +77,7 @@
 {% block js %}
     <script src="{% static 'plugins/editor-md/editor.md-master/editormd.min.js' %}"></script>
     <script>
-        var WIKI_DETAIL_URL = "http://localhost:8000/manage/{{ request.People.project.id }}/wiki/";
+        var WIKI_DETAIL_URL = "{% url 'wiki_list' request.People.project.id %}";
         $(function () {
             initCatalog();
             initEditorMd()

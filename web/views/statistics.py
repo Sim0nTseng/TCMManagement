@@ -63,7 +63,7 @@ def statistics_project_user(request, nid):
     user_list = models.ProjectUser.objects.filter(task_id=nid)
     for item in user_list:
         all_ueser_dict[item.participter_id] = {
-            'name': item.participter.name,
+            'name': item.participter.username,
             'status': {item[0]: 0 for item in models.Issues.status_choices}
         }
     # 2.去数据库获取相关的所有问题

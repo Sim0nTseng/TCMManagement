@@ -50,12 +50,12 @@
             <!-- Default panel contents -->
             <div class="panel-heading">
                 <div>
-                    <a href="http://localhost:8000/manage/{{ request.People.project.id }}/file/">
+                    <a href={% url 'file_list' request.People.project.id %}>
                         <i class="fa fa-home" aria-hidden="true"></i>
                         <span>文件库</span>
                     </a>
                     {% for record in bredcrumb_list %}
-                        <a href="http://localhost:8000/manage/{{ request.People.project.id }}/file/?folder={{ record.id }}">
+                        <a href="{% url 'file_list' nid=request.People.project.id %}?folder={{ record.id }}">
                             <i class="fa fa-caret-right" aria-hidden="true"></i>
                             <span>{{ record.name }}</span>
                         </a>
@@ -91,7 +91,8 @@
                                 <i class="fa fa-file" aria-hidden="true"></i>
                                 {{ item.name }}
                             {% else %}
-                                <a href="http://localhost:8000/manage/{{ request.People.project.id }}/file/?folder={{ item.id }}">
+{#                                <a href="http://localhost:8000/manage/{{ request.People.project.id }}/file/?folder={{ item.id }}">#}
+                                <a href="{% url 'file_list' nid=request.People.project.id %}?folder={{ item.id }}">
                                     <i class="fa fa-folder" aria-hidden="true"></i>
                                     {{ item.name }}
                                 </a>
@@ -118,7 +119,8 @@
                                 </a>
                             {% else %}
                                 <a class="btn btn-default btn-xs"
-                                   href="http://localhost:8000/manage/{{ request.People.project.id }}/cos/{{ item.id }}/downlowd/">
+{#                                   href="http://localhost:8000/manage/{{ request.People.project.id }}/cos/{{ item.id }}/downlowd/">#}
+                                href="{% url 'file_download' nid=request.People.project.id file_id=item.id %}">
                                     <i class="fa fa-cloud-download" aria-hidden="true"></i>
                                 </a>
                             {% endif %}
@@ -246,9 +248,9 @@
 {% block js %}
     <script src="{% static 'js/cos-js-sdk-v5.min.js' %}"></script>
     <script>
-        var FILE_URL = "http://localhost:8000/manage/{{ request.People.project.id }}/file/"
-        var FILE_DELETE_URL = "http://localhost:8000/manage/{{ request.People.project.id }}/file/"
-        var COS_CREDENTIAL = "http://localhost:8000/manage/{{ request.People.project.id }}/cos/cos_credential/"
+        {#var FILE_URL = "http://localhost:8000/manage/{{ request.People.project.id }}/file/"#}
+        var FILE_URL = "{% url "file_list" request.People.project.id %}"
+        var COS_CREDENTIAL = "{% url "cos_credential" request.People.project.id %}"
 
         $(function () {
             initAddModal();

@@ -47,8 +47,8 @@
     <script src="{% static 'plugins/highcharts/highcharts.js' %}"></script>
 
     <script>
-        var PRIORITY_API = "http://localhost:8000/manage/{{ request.People.project.id }}/statistics/priority";
-        var PROJECT_USER_API = "http://localhost:8000/manage/{{ request.People.project.id }}/statistics/project_user";
+        var PRIORITY_API = "{% url "statistics_priority" request.People.project.id %}";
+        var PROJECT_USER_API = "{% url "statistics_project_user" request.People.project.id %}";
         $(function () {
             initDateRangePicker();
 
