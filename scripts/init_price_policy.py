@@ -10,6 +10,9 @@ def run():
             price=1,
             project_num=100,
             project_member=20,
+            project_space=50,
+            per_file_size=50,
+
         )
 
 if __name__ == '__main__':

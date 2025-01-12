@@ -93,7 +93,7 @@ def login(request):
             # 用户名密码正确，登陆成功
             request.session['user_id'] = user_object.id
             request.session.set_expiry(60*60*24*14)
-            return redirect('/index/')
+            return redirect('/project/list/')
         form.add_error('username','用户名和密码错误')
     return render(request,'web/login.html',{'form':form})
 

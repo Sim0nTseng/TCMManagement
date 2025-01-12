@@ -47,22 +47,18 @@ class Transaction(models.Model):
         (2, "已支付")
     )
     status = models.SmallIntegerField(verbose_name="状态", choices=status_choice, default=1)
-
     order = models.CharField(verbose_name="订单号", max_length=64, unique=True)
     user = models.ForeignKey(verbose_name="用户", to="UserInfo", on_delete=models.CASCADE)
     price_policy = models.ForeignKey(verbose_name="价格策略", to="Price", on_delete=models.CASCADE)
-
     count = models.IntegerField(verbose_name="数量（年）", help_text='0表示无限期')
     price = models.IntegerField(verbose_name="实际支付费用")
-
     start_datetime = models.DateTimeField(verbose_name="开始时间", null=True, blank=True)
     end_datetime = models.DateTimeField(verbose_name="结束时间", null=True, blank=True)
-
     create_datetime = models.DateTimeField(auto_now_add=True, verbose_name="创建时间")
 
 
 # 药品表
-class Medicine(models.Model):
+class Project(models.Model):
     COLOR_CHOICES = (
         (1, "#FF0000"),  # 56b8eb 红色
         (2, "#98FB98"),  # f28033 绿色
@@ -72,39 +68,31 @@ class Medicine(models.Model):
     STATUS_CHOICES = (
         (1, "正常"),
         (2, "临期"),
-        (3, "过期")
+        (3, "结束")
     )
-
-    sava_mothod = (
-        (1, "常温保存"),
-        (2, "干燥保存"),
-        (3, "高湿度保存"),
-        (4, "冷藏")
+    #优先级
+    PRIORITY_CHOICES = (
+        (1, "高"),
+        (2, "中"),
+        (3, "低"),
     )
-
     bucket = models.CharField(verbose_name="COS桶", max_length=128)
     region = models.CharField(verbose_name="COS区域", max_length=32)
 
     use_space = models.BigIntegerField(verbose_name="该药品COS已使用空间", default=0, help_text='字节')
     # 项目已使用的管理药品数
-    use_medicine = models.IntegerField(verbose_name="已使用管理药品数", default=0)
-    name = models.CharField(max_length=32, verbose_name='药品名称', db_index=True)
+    use_project = models.IntegerField(verbose_name="已使用管理药品数", default=0)
+    name = models.CharField(max_length=32, verbose_name='任务名称', db_index=True)
     color = models.SmallIntegerField(verbose_name="颜色", choices=COLOR_CHOICES, default=1)
-    status = models.SmallIntegerField(verbose_name='药品状态', choices=STATUS_CHOICES, default=1)
+    status = models.SmallIntegerField(verbose_name='任务状态', choices=STATUS_CHOICES, default=1)
     # 药品描述
-    desc = models.CharField(verbose_name="药品描述", max_length=255, blank=True, null=True)
-    # 保质期,以月份存储
-    EXP = models.IntegerField(verbose_name='保质期')
+    desc = models.CharField(verbose_name="任务描述", max_length=255, blank=True, null=True)
+    # 持续时间,以天数存储
+    EXP = models.IntegerField(verbose_name='持续时间')
     # 干湿保存方法
-    keep = models.SmallIntegerField(verbose_name='保存方法', choices=sava_mothod, default=1)
-    # 入库时间
-    warehousing_time = models.DateTimeField(verbose_name='入库时间', auto_now_add=True)
+    priority = models.SmallIntegerField(verbose_name='任务优先级', choices=PRIORITY_CHOICES, default=3)
     # 过期时间
     expiry_date = models.DateTimeField(verbose_name='过期时间')
-    # 库存
-    stocks = models.IntegerField(verbose_name='库存（Kg）')
-    # 余量
-    # margin=models.IntegerField(verbose_name='余量（Kg）')
     # 记录人
     creator = models.ForeignKey(verbose_name='记录人', to="UserInfo", on_delete=models.CASCADE, null=True, blank=True)
     # 创建时间
@@ -116,13 +104,13 @@ class ProjectUser(models.Model):
     """药品管理添加者"""
     participter = models.ForeignKey(verbose_name="任务参与者", to="UserInfo", on_delete=models.CASCADE)
     # 传入一整条 object，是不行的，必须传入一条数据
-    task = models.ForeignKey(verbose_name="药品任务", to='Medicine', on_delete=models.CASCADE)
+    task = models.ForeignKey(verbose_name="药品任务", to='Project', on_delete=models.CASCADE)
     create_time = models.DateTimeField(auto_now_add=True, verbose_name="加入时间")
 
 
 class Wiki(models.Model):
     """wiki文章"""
-    medicine = models.ForeignKey(verbose_name="药品", to="Medicine", on_delete=models.CASCADE)
+    project = models.ForeignKey(verbose_name="药品", to="Project", on_delete=models.CASCADE)
     title = models.CharField(max_length=32, verbose_name="标题")
     content = models.TextField(verbose_name="内容/回复")
     depth = models.IntegerField(verbose_name="深度", default=1)
@@ -133,7 +121,7 @@ class Wiki(models.Model):
 
 class File(models.Model):
     """文件"""
-    medicine = models.ForeignKey(verbose_name="药品", to="Medicine", on_delete=models.CASCADE)
+    project = models.ForeignKey(verbose_name="药品", to="Project", on_delete=models.CASCADE)
     file_type_choices = (
         (1, "文件"),
         (2, "文件夹"),
@@ -153,7 +141,7 @@ class File(models.Model):
 
 class Issues(models.Model):
     """ 问题 """
-    project = models.ForeignKey(verbose_name='药品', to='Medicine', on_delete=models.CASCADE)
+    project = models.ForeignKey(verbose_name='药品', to='Project', on_delete=models.CASCADE)
     issues_type = models.ForeignKey(verbose_name='问题类型', to='IssuesType', on_delete=models.CASCADE)
     module = models.ForeignKey(verbose_name='模块', to='Module', null=True, blank=True, on_delete=models.CASCADE)
 
@@ -205,7 +193,7 @@ class Issues(models.Model):
 
 class Module(models.Model):
     """ 模块（里程碑）"""
-    project = models.ForeignKey(verbose_name='药品', to='Medicine', on_delete=models.CASCADE)
+    project = models.ForeignKey(verbose_name='药品', to='Project', on_delete=models.CASCADE)
     title = models.CharField(verbose_name='模块名称', max_length=32)
 
     def __str__(self):
@@ -217,7 +205,7 @@ class IssuesType(models.Model):
     PROJECT_INIT_LIST = ["物流", "售后", "工作"]
 
     title = models.CharField(verbose_name='类型名称', max_length=32)
-    project = models.ForeignKey(verbose_name='药品', to='Medicine', on_delete=models.CASCADE)
+    project = models.ForeignKey(verbose_name='药品', to='Project', on_delete=models.CASCADE)
 
     def __str__(self):
         return self.title
@@ -243,7 +231,7 @@ class IssuesReply(models.Model):
 
 class ProjectInvite(models.Model):
     """ 项目邀请码 """
-    project = models.ForeignKey(verbose_name='项目', to='Medicine', on_delete=models.CASCADE)
+    project = models.ForeignKey(verbose_name='项目', to='Project', on_delete=models.CASCADE)
     code = models.CharField(verbose_name='邀请码', max_length=64, unique=True)
     count = models.PositiveIntegerField(verbose_name='限制数量', null=True, blank=True, help_text='空表示无数量限制')
     use_count = models.PositiveIntegerField(verbose_name='已邀请数量', default=0)

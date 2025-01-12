@@ -22,23 +22,23 @@ def project_list(request):
         # 获取现在的时间
         now_time = datetime.now()
         # 获取每个药的时间遍历
-        medicines_list = models.Medicine.objects.filter(creator=request.People.user)
+        projects_list = models.Project.objects.filter(creator=request.People.user)
         join_list = models.ProjectUser.objects.filter(participter=request.People.user)
-        related_medicines = []
-        related_medicines.append(medicines_list)
+        related_projects = []
+        related_projects.append(projects_list)
         for queryset in join_list:
-            related_medicines.append(queryset.task)
+            related_projects.append(queryset.task)
 
         # 获取每个obj
-        for row in medicines_list:
+        for row in projects_list:
             # 处理时间字符串,转换为无时区的
             expiry_date = row.expiry_date.replace(tzinfo=None)
             if now_time + timedelta(days=20) >= expiry_date and now_time + timedelta(days=20) < expiry_date:
-                models.Medicine.objects.filter(id=row.id).update(status=2, color=3)
+                models.Project.objects.filter(id=row.id).update(status=2, color=3)
             elif now_time > expiry_date:
-                models.Medicine.objects.filter(id=row.id).update(status=3, color=1)
+                models.Project.objects.filter(id=row.id).update(status=3, color=1)
             else:
-                models.Medicine.objects.filter(id=row.id).update(status=1, color=2)
+                models.Project.objects.filter(id=row.id).update(status=1, color=2)
 
 
         for row in join_list:
@@ -46,39 +46,39 @@ def project_list(request):
             # 处理时间字符串,转换为无时区的
             expiry_date = row.expiry_date.replace(tzinfo=None)
             if now_time + timedelta(days=20) >= expiry_date and now_time + timedelta(days=20) < expiry_date:
-                models.Medicine.objects.filter(id=row.id).update(status=2, color=3)
+                models.Project.objects.filter(id=row.id).update(status=2, color=3)
             elif now_time > expiry_date:
-                models.Medicine.objects.filter(id=row.id).update(status=3, color=1)
+                models.Project.objects.filter(id=row.id).update(status=3, color=1)
             else:
-                models.Medicine.objects.filter(id=row.id).update(status=1, color=2)
+                models.Project.objects.filter(id=row.id).update(status=1, color=2)
 
-            # 1. 从数据库中获取两部分数据
-            #     我创建的所有项目：所有药品状态
-            #     我参与管理的所有项目：所有药品状态
+        # 1. 从数据库中获取两部分数据
+        #     我创建的所有项目：所有药品状态
+        #     我参与管理的所有项目：所有药品状态
 
         # 遍历过后加入到各自的地方
-        medicine_dict = {'临期': [], '过期': [], '正常': [], 'my': [], 'join': []}
+        projects_dict = {'临期': [], '过期': [], '正常': [], 'my': [], 'join': []}
 
         # 我创建的所有项目：所有药品状态
-        my_medicine_list = models.Medicine.objects.filter(creator=request.People.user)
+        my_project_list = models.Project.objects.filter(creator=request.People.user)
 
-        for row in my_medicine_list:
-            medicine_dict['my'].append(row)
+        for row in my_project_list:
+            projects_dict['my'].append(row)
             if row.status == 2:
-                medicine_dict['临期'].append(row)
+                projects_dict['临期'].append(row)
             elif row.status == 3:
-                medicine_dict['过期'].append(row)
+                projects_dict['过期'].append(row)
             else:
-                medicine_dict['正常'].append(row)
+                projects_dict['正常'].append(row)
 
         # 我参与管理的所有项目：所有药品状态
         join_projects_list = models.ProjectUser.objects.filter(participter=request.People.user)
         for row in join_projects_list:
-            medicine_dict['join'].append(row.task)
+            projects_dict['join'].append(row.task)
             if row.task.status == 2:
-                medicine_dict['临期'].append(row.task)  # 这个task是指整个一条的medicine数据
+                projects_dict['临期'].append(row.task)  # 这个task是指整个一条的medicine数据
         form = ProjectForm(request)
-        return render(request, 'web/project_list.html', {'form': form, 'medicine_dict': medicine_dict})
+        return render(request, 'web/project_list.html', {'form': form, 'medicine_dict': projects_dict})
     # POST,对话框的ajax添加项目
     form = ProjectForm(request, data=request.POST)
     if form.is_valid():
@@ -92,9 +92,7 @@ def project_list(request):
         form.instance.region = region
         # 验证通过
         form.instance.creator = request.People.user
-
         # 处理过期时间
-
         # 获取存储时间
         warehousing_time = datetime.now()
         # 获取保质期

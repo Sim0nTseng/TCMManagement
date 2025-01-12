@@ -3,14 +3,24 @@
 {% block title %}首页{% endblock %}
 {% block css %}
     <style>
-    img{
+    img {
         width: 100%;
+    }
+    .content-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        text-align: center;
     }
     </style>
 {% endblock %}
 
 {% block content %}
-    <div>
-        喵
+    <div class="content-container">
+        <div>
+            <h1>欢迎来到药综无忧网站</h1>
+            <p>我们致力于为您提供最优质的中药管理服务。</p>
+        </div>
     </div>
 {% endblock %}

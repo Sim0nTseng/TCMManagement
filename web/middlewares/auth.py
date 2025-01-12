@@ -43,7 +43,7 @@ class AuthMiddleware(MiddlewareMixin):
         # 判断是否已过期
         curent_datetime = datetime.datetime.now()
         # 判断是否存在且小于结束时间，因为如果是免费版的，endtime为0
-        if _object.end_datetime and _object.end_datetime < curent_datetime:
+        if _object.end_datetime or _object.end_datetime < curent_datetime:
             # 获取免费版，将其变为免费版
             _object = models.Transaction.objects.filter(user=user_object, status=2, price_policy__category=1).first()
         # request.transaction = _object

@@ -88,14 +88,11 @@
     <div class="container-fluid project">
         <div style="margin: 10px 0;">
             <a class="btn btn-primary" data-toggle="modal" data-target="#addModal">
-                <i class="fa fa-plus-square" aria-hidden="true"></i> 新增药品
+                <i class="fa fa-plus-square" aria-hidden="true"></i> 创建任务
             </a>
-{#            <a class="btn btn-success" data-toggle="modal" href="">#}
-{#                <i class="fa fa-calendar-plus-o" aria-hidden="true"></i> 切换至任务管理#}
-{#            </a>#}
         </div>
         <div class="panel panel-default">
-            <div class="panel-heading"><i class="fa fa-warning" aria-hidden="true"/></i> 临期药品</div>
+            <div class="panel-heading"><i class="fa fa-warning" aria-hidden="true"/></i> 临期任务</div>
             <div class="panel-body">
                 {% for item in medicine_dict.临期 %}
                     <div class="item">
@@ -118,7 +115,7 @@
 
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h3 class="panel-title"><i class="fa fa-magnet" aria-hidden="true"/></i> 正常药品</h3>
+                <h3 class="panel-title"><i class="fa fa-magnet" aria-hidden="true"/></i> 进行中的任务</h3>
             </div>
             <div class="panel-body">
                 {% for item in medicine_dict.正常 %}
@@ -141,7 +138,7 @@
 
         </div>
         <div class="panel panel-default">
-            <div class="panel-heading"><i class="fa fa-trash" aria-hidden="true"/></i> 过期药品</div>
+            <div class="panel-heading"><i class="fa fa-trash" aria-hidden="true"/></i> 超时任务</div>
             <div class="panel-body">
                 {% for item in medicine_dict.过期 %}
                     <div class="item">
@@ -163,7 +160,7 @@
 
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h3 class="panel-title"><i class="fa fa-tasks" aria-hidden="true"/></i> 我创建的药品</h3>
+                <h3 class="panel-title"><i class="fa fa-tasks" aria-hidden="true"/></i> 我创建的任务</h3>
             </div>
             <div class="panel-body">
                 {% for item in medicine_dict.my %}
@@ -186,7 +183,7 @@
 
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h3 class="panel-title"><i class="fa fa-handshake-o" aria-hidden="true"></i> 我参与管理的药品</h3>
+                <h3 class="panel-title"><i class="fa fa-handshake-o" aria-hidden="true"></i> 我参与的任务</h3>
             </div>
             <div class="panel-body">
                 {% for item in medicine_dict.join %}
@@ -215,7 +212,7 @@
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
                             aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title" id="myModalLabel">新增药品</h4>
+                    <h4 class="modal-title" id="myModalLabel">新增任务</h4>
                 </div>
                 <div class="modal-body">
                     <form id="addForm">
