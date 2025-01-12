@@ -76,9 +76,9 @@ def project_list(request):
         for row in join_projects_list:
             projects_dict['join'].append(row.task)
             if row.task.status == 2:
-                projects_dict['临期'].append(row.task)  # 这个task是指整个一条的medicine数据
+                projects_dict['临期'].append(row.task)  # 这个task是指整个一条的project数据
         form = ProjectForm(request)
-        return render(request, 'web/project_list.html', {'form': form, 'medicine_dict': projects_dict})
+        return render(request, 'web/project_list.html', {'form': form, 'project_dict': projects_dict})
     # POST,对话框的ajax添加项目
     form = ProjectForm(request, data=request.POST)
     if form.is_valid():
@@ -95,10 +95,14 @@ def project_list(request):
         # 处理过期时间
         # 获取存储时间
         warehousing_time = datetime.now()
-        # 获取保质期
+        # 获取持续时间
+        # 从表单的清洗后数据中获取'EXP'字段的值，通常代表过期时间的天数
         EXP = form.cleaned_data['EXP']
-        expiry_date = (warehousing_time + timedelta(days=EXP * 30)).astimezone(timezone.utc)
-        form.instance.expiry_date = expiry_date
+        # 计算过期日期：当前时间加上过期时间的天数，并转换为UTC时间
+        expiry_date = (warehousing_time + timedelta(days=EXP)).astimezone(timezone.utc)
+        # 将带时区的时间戳转换为不带时区的时间戳
+        # 这里为什么这么做：在某些情况下，可能需要移除时间的时区信息，以便在不同系统或数据库之间进行比较或存储
+        form.instance.expiry_date = expiry_date.replace(tzinfo=None)
         # 创建项目
         instance = form.save()
 

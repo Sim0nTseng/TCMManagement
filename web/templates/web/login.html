@@ -42,7 +42,7 @@
         </div>
         {#不要写成submit虽然更简单，写ajax就不能写submit#}
         <button type="submit" class="btn btn-primary" >登 录</button>
-        <button type="button" class="btn btn-default" id="">注 册</button>
+        <button type="button" class="btn btn-default" id="register">注 册</button>
         </form>
     </div>
 {% endblock %}
@@ -54,6 +54,11 @@
             var oldSrc=$(this).attr("src"); //获取原来的地址
             $(this).attr('src',oldSrc+'?');///index/?相当于再发一次请求
         })
+    })
+    $(function (){
+        $("#register").click(function (){
+            window.location.href="/register/"
+        });
     })
     </script>
 {% endblock %}

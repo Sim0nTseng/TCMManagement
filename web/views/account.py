@@ -38,6 +38,9 @@ def register(request):
             count = 0,
             price = 0,
             start_datetime = datetime.datetime.now(),
+            # 创建时间，结束时间
+            # 创建时间就是当前时间，结束时间就是当前时间加上一个月
+            end_datetime = datetime.datetime.now() + datetime.timedelta(days=365),
         )
 
         return JsonResponse({'status': True, 'data': '/login/'})

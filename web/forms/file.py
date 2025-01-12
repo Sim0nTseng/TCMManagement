@@ -20,7 +20,7 @@ class FileFolderModelForm(forms.ModelForm, BootStrapForm):
     def clean_name(self):
         name = self.cleaned_data['name']
         # 数据库判断 当前目录下此文件夹是否已存在
-        queryset = models.File.objects.filter(name=name, medicine=self.request.People.project, file_type=2)
+        queryset = models.File.objects.filter(name=name, project=self.request.People.project, file_type=2)
         if self.parent_obj:
             exists = queryset.filter(parent=self.parent_obj).exists()
         else:
@@ -35,7 +35,7 @@ class FilePostForm(forms.ModelForm):
 
     class Meta:
         model = models.File
-        exclude = ['medicine', 'file_type', 'update_user', 'update_datetime']
+        exclude = ['project', 'file_type', 'update_user', 'update_datetime']
 
     def __init__(self, request, *args, **kwargs):
         super().__init__(*args, **kwargs)

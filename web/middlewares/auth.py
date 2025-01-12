@@ -57,12 +57,11 @@ class AuthMiddleware(MiddlewareMixin):
             return
         # uid是我创建的 or 我参与的
         nid = kwargs.get('nid')
-
         # 是否是我创建的
-        medicine_obj = models.Medicine.objects.filter(creator=request.People.user, id=nid).first()
-        if medicine_obj:
+        project_obj = models.Project.objects.filter(creator=request.People.user, id=nid).first()
+        if project_obj:
             # 是我创建的项目，让他通过
-            request.People.project = medicine_obj
+            request.People.project = project_obj
             return
         # 是否为我参与的项目
         # Bug 修复：使用双下划线表示模型之间的关系

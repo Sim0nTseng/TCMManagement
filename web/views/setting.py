@@ -12,8 +12,8 @@ def delete(request, nid):
     """删除项目"""
     if request.method == 'GET':
         return render(request, 'web/setting_delete.html')
-    medicine_name = request.POST.get("medicine_name")
-    if not medicine_name or medicine_name != request.People.project.name:
+    project_name = request.POST.get("project_name")
+    if not project_name or project_name != request.People.project.name:
         return render(request, 'web/setting_delete.html', {'msg': '药品名错误，请检查该药品是否为您要删除的药品'})
     # 药名写对了，将他进行删除(只有创建者才可以删除)
     if request.People.user != request.People.project.creator:
@@ -27,5 +27,5 @@ def delete(request, nid):
     #    - 项目删除
         delete_bucket(request.People.project.bucket, request.People.project.region)
     finally:
-        models.Medicine.objects.filter(id=nid).delete()
+        models.Project.objects.filter(id=nid).delete()
         return redirect('/project/list/')

@@ -94,7 +94,7 @@
         <div class="panel panel-default">
             <div class="panel-heading"><i class="fa fa-warning" aria-hidden="true"/></i> 临期任务</div>
             <div class="panel-body">
-                {% for item in medicine_dict.临期 %}
+                {% for item in project_dict.临期 %}
                     <div class="item">
                         <a href="/manage/{{ item.id }}/dashboard" class="title"
                            style="background-color: {{ item.get_color_display }};font-family: 宋体;color: #0e0e0e;font-weight: bold">{{ item.name }}</a>
@@ -118,7 +118,7 @@
                 <h3 class="panel-title"><i class="fa fa-magnet" aria-hidden="true"/></i> 进行中的任务</h3>
             </div>
             <div class="panel-body">
-                {% for item in medicine_dict.正常 %}
+                {% for item in project_dict.正常 %}
                     <div class="item">
                         <a href="/manage/{{ item.id }}/dashboard" class="title"
                            style="background-color: {{ item.get_color_display }};font-family: 宋体;color: #0e0e0e;font-weight: bold">{{ item.name }}</a>
@@ -140,7 +140,7 @@
         <div class="panel panel-default">
             <div class="panel-heading"><i class="fa fa-trash" aria-hidden="true"/></i> 超时任务</div>
             <div class="panel-body">
-                {% for item in medicine_dict.过期 %}
+                {% for item in project_dict.过期 %}
                     <div class="item">
                         <a href="/manage/{{ item.id }}/dashboard" class="title"
                            style="background-color: {{ item.get_color_display }};font-family: 宋体;color: #0e0e0e;font-weight: bold">{{ item.name }}</a>
@@ -163,7 +163,7 @@
                 <h3 class="panel-title"><i class="fa fa-tasks" aria-hidden="true"/></i> 我创建的任务</h3>
             </div>
             <div class="panel-body">
-                {% for item in medicine_dict.my %}
+                {% for item in project_dict.my %}
                     <div class="item">
                         <a href="/manage/{{ item.id }}/dashboard" class="title"
                            style="background-color: {{ item.get_color_display }};font-family: 宋体;color: #0e0e0e;font-weight: bold">{{ item.name }}</a>
@@ -186,7 +186,7 @@
                 <h3 class="panel-title"><i class="fa fa-handshake-o" aria-hidden="true"></i> 我参与的任务</h3>
             </div>
             <div class="panel-body">
-                {% for item in medicine_dict.join %}
+                {% for item in project_dict.join %}
                     <div class="item">
                         <a href="/manage/{{ item.id }}/dashboard" class="title"
                            style="background-color: {{ item.get_color_display }};font-family: 宋体;color: #0e0e0e;font-weight: bold">{{ item.name }}</a>

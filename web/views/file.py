@@ -20,7 +20,7 @@ def File(request, nid):
     folder_id = request.GET.get('folder', "")
 
     if folder_id.isdecimal():
-        parent_obj = models.File.objects.filter(file_type=2, id=int(folder_id), medicine=request.People.project).first()
+        parent_obj = models.File.objects.filter(file_type=2, id=int(folder_id), project=request.People.project).first()
 
     # GET查看页面
     if request.method == 'GET':
@@ -34,7 +34,7 @@ def File(request, nid):
             parent = parent.parent
 
         # 当前目录下所有的文件 & 文件夹获取到即可
-        query_set = models.File.objects.filter(medicine=request.People.project)
+        query_set = models.File.objects.filter(project=request.People.project)
         if parent_obj:
             # 进入了某目录
             file_object_list = query_set.filter(parent=parent_obj, ).order_by('-file_type')
@@ -58,7 +58,7 @@ def File(request, nid):
     edit_obj = None
     if fid.isdecimal():
         # 修改
-        edit_obj = models.File.objects.filter(id=int(fid), file_type=2, medicine=request.People.project).first()
+        edit_obj = models.File.objects.filter(id=int(fid), file_type=2, project=request.People.project).first()
     if edit_obj:
         # 编辑
         form = FileFolderModelForm(request, parent_obj, request.POST, instance=edit_obj)
@@ -66,7 +66,7 @@ def File(request, nid):
         form = FileFolderModelForm(request, parent_obj, request.POST)
 
     if form.is_valid():
-        form.instance.medicine = request.People.project
+        form.instance.project = request.People.project
         form.instance.file_type = 2
         form.instance.update_user = request.People.user
         form.instance.parent = parent_obj
@@ -80,7 +80,7 @@ def file_delete(request, nid):
     """删除文件"""
     fid = request.GET.get('fid')
     # 删除数据库的值
-    delete_obj = models.File.objects.filter(id=int(fid), medicine=request.People.project).first()
+    delete_obj = models.File.objects.filter(id=int(fid), project=request.People.project).first()
     if delete_obj.file_type == 1:
         # 删除文件（数据库文件删除，cos删除，项目使用空间还回去）
         # 字节
@@ -99,7 +99,7 @@ def file_delete(request, nid):
         folder_list = [delete_obj, ]
         key_list = []
         for folder in folder_list:
-            child_list = models.File.objects.filter(medicine=request.People.project, parent=folder).order_by(
+            child_list = models.File.objects.filter(project=request.People.project, parent=folder).order_by(
                 '-file_type')
             for child in child_list:
                 if child.file_type == 2:
@@ -167,7 +167,7 @@ def file_post(request, nid):
         # instance=form.save() # 添加成功之后，获取到新添加的那个对象（instance.id但不可以instance.get_xx_display）
         data_dict = form.cleaned_data
         # data_dict.pop('etag')
-        data_dict.update({'medicine': request.People.project, 'file_type': 1, 'update_user': request.People.user})
+        data_dict.update({'project': request.People.project, 'file_type': 1, 'update_user': request.People.user})
         instance = models.File.objects.create(**data_dict)
 
         # 项目已使用空间
@@ -191,7 +191,7 @@ def file_download(request, nid,file_id):
     # 响应头
     # 打开文件,获取内容,去cos获取
     import requests
-    file_obj=models.File.objects.filter(id=file_id, medicine_id=nid).first()
+    file_obj=models.File.objects.filter(id=file_id, project_id=nid).first()
     res=requests.get(file_obj.file_path)
     data = res.content
     responce=HttpResponse(data)

@@ -30,7 +30,6 @@ class Price(models.Model):
     title = models.CharField(max_length=128, verbose_name='标题', null=True)
     category = models.SmallIntegerField(verbose_name='用户级别', choices=category_choices, default=1)
     price = models.SmallIntegerField(verbose_name='价格', choices=price_choices, default=1)
-
     project_num = models.PositiveIntegerField(verbose_name="项目数")
     project_member = models.PositiveIntegerField(verbose_name="项目成员数")
     project_space = models.PositiveIntegerField(verbose_name="单项目空间", help_text="G")

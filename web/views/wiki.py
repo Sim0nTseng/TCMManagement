@@ -13,7 +13,7 @@ def wiki(request,nid):
     wiki_id=request.GET.get('wiki_id')
     if not wiki_id or not wiki_id.isdecimal():
         return render(request,'web/wiki.html')
-    wiki_obj=models.Wiki.objects.filter(id=wiki_id,medicine_id=nid).first()
+    wiki_obj=models.Wiki.objects.filter(id=wiki_id,project_id=nid).first()
     return render(request,'web/wiki.html',{'wiki_obj':wiki_obj})
 
 def wiki_add(request,nid):
@@ -28,7 +28,7 @@ def wiki_add(request,nid):
             form.instance.depth=form.instance.parent.depth + 1
         else:
             form.instance.depth=1
-        form.instance.medicine = request.People.project
+        form.instance.project = request.People.project
         form.save()
         return redirect('/manage/'+str(nid)+'/wiki/')
 
@@ -36,7 +36,7 @@ def wiki_add(request,nid):
 def wiki_catalog(request,nid):
     """wiki目录"""
     # 获取当前药品的所有的
-    data=models.Wiki.objects.filter(medicine=request.People.project).values('id','title','parent_id').order_by('depth','id')
+    data=models.Wiki.objects.filter(project=request.People.project).values('id','title','parent_id').order_by('depth','id')
     return JsonResponse({'status': True, 'data': list(data)})
 
 
@@ -48,7 +48,7 @@ def wiki_delete(request,nid):
     :return:
     """
     wiki_id=request.GET.get('wiki_id')
-    models.Wiki.objects.filter(medicine_id=nid,id=wiki_id).delete()
+    models.Wiki.objects.filter(project_id=nid,id=wiki_id).delete()
     return redirect('/manage/'+str(nid)+'/wiki/')
 
 # 免除csrftoken的认证
@@ -60,7 +60,7 @@ def wiki_edit(request,nid):
     :return:
     """
     wiki_id=request.GET.get('wiki_id')
-    wiki_obj=models.Wiki.objects.filter(medicine_id=nid,id=wiki_id).first()
+    wiki_obj=models.Wiki.objects.filter(project_id=nid,id=wiki_id).first()
     if not wiki_obj:
         return redirect('/manage/'+str(nid)+'/wiki/')
     if request.method=='GET':
@@ -72,7 +72,7 @@ def wiki_edit(request,nid):
             form.instance.depth = form.instance.parent.depth + 1
         else:
             form.instance.depth = 1
-        form.instance.medicine = request.People.project
+        form.instance.project = request.People.project
         form.save()
         return redirect('/manage/'+str(nid)+'/wiki/')
     return render(request, 'web/wiki_edit.html')
